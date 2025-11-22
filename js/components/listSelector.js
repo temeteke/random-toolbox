@@ -4,10 +4,12 @@ import { HistoryManager } from '../utils/HistoryManager.js';
  * リスト選択ツールのAlpineコンポーネント
  */
 export function listSelector() {
+    const historyManager = new HistoryManager('listHistory');
     return {
         listItems: '',
         result: null,
-        historyManager: new HistoryManager('listHistory'),
+        historyManager: historyManager,
+        history: [],
         animating: false,
 
         init() {
@@ -21,6 +23,8 @@ export function listSelector() {
             this.$watch('listItems', (value) => {
                 localStorage.setItem('savedListItems', value);
             });
+
+            this.history = this.historyManager.getRecent(10);
         },
 
         select() {
@@ -55,16 +59,14 @@ export function listSelector() {
                 item: selectedItem,
                 time: time
             });
+            this.history = this.historyManager.getRecent(10);
         },
 
         clearHistory() {
             if (confirm('履歴をすべて削除しますか?')) {
                 this.historyManager.clear();
+                this.history = [];
             }
-        },
-
-        get history() {
-            return this.historyManager.getRecent(10);
         }
     };
 }

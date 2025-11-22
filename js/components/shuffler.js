@@ -4,11 +4,13 @@ import { HistoryManager } from '../utils/HistoryManager.js';
  * シャッフラーツールのAlpineコンポーネント
  */
 export function shuffler() {
+    const historyManager = new HistoryManager('shuffleHistory');
     return {
         items: '',
         groupCount: 0,
         shuffledResult: null,
-        historyManager: new HistoryManager('shuffleHistory'),
+        historyManager: historyManager,
+        history: [],
         animating: false,
 
         init() {
@@ -17,6 +19,8 @@ export function shuffler() {
             if (savedItems) {
                 this.items = savedItems;
             }
+
+            this.history = this.historyManager.getRecent(10);
         },
 
         shuffle() {
@@ -53,6 +57,7 @@ export function shuffler() {
                     config: `${itemsList.length}項目`,
                     time: time
                 });
+                this.history = this.historyManager.getRecent(10);
             } else {
                 // グループ分け
                 if (groupCount > itemsList.length) {
@@ -78,6 +83,7 @@ export function shuffler() {
                     config: `${itemsList.length}項目`,
                     time: time
                 });
+                this.history = this.historyManager.getRecent(10);
             }
 
             // アニメーション
@@ -103,11 +109,8 @@ export function shuffler() {
         clearHistory() {
             if (confirm('履歴をすべて削除しますか?')) {
                 this.historyManager.clear();
+                this.history = [];
             }
-        },
-
-        get history() {
-            return this.historyManager.getRecent(10);
         }
     };
 }

@@ -4,15 +4,18 @@ import { HistoryManager } from '../utils/HistoryManager.js';
  * 数字生成ツールのAlpineコンポーネント
  */
 export function numberGenerator() {
+    const historyManager = new HistoryManager('randomHistory');
     return {
         min: 1,
         max: 100,
         result: null,
-        historyManager: new HistoryManager('randomHistory'),
+        historyManager: historyManager,
+        history: [],
         animating: false,
 
         init() {
-            // 初期化時に履歴を読み込む（Alpine.jsのリアクティビティで自動表示）
+            // 初期化時に履歴を読み込む
+            this.history = this.historyManager.getRecent(10);
         },
 
         generate() {
@@ -48,16 +51,14 @@ export function numberGenerator() {
                 range: `${min}-${max}`,
                 time: time
             });
+            this.history = this.historyManager.getRecent(10);
         },
 
         clearHistory() {
             if (confirm('履歴をすべて削除しますか?')) {
                 this.historyManager.clear();
+                this.history = [];
             }
-        },
-
-        get history() {
-            return this.historyManager.getRecent(10);
         }
     };
 }

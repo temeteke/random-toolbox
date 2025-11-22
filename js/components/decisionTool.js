@@ -4,10 +4,12 @@ import { HistoryManager } from '../utils/HistoryManager.js';
  * 決定ツールのAlpineコンポーネント
  */
 export function decisionTool() {
+    const historyManager = new HistoryManager('decisionHistory');
     return {
         options: 'はい\nいいえ',
         decision: '',
-        historyManager: new HistoryManager('decisionHistory'),
+        historyManager: historyManager,
+        history: [],
         animating: false,
 
         init() {
@@ -16,6 +18,8 @@ export function decisionTool() {
             if (savedOptions) {
                 this.options = savedOptions;
             }
+
+            this.history = this.historyManager.getRecent(10);
         },
 
         makeDecision() {
@@ -50,6 +54,7 @@ export function decisionTool() {
                 options: optionsList.join('/'),
                 time: time
             });
+            this.history = this.historyManager.getRecent(10);
         },
 
         saveOptions() {
@@ -59,11 +64,8 @@ export function decisionTool() {
         clearHistory() {
             if (confirm('履歴をすべて削除しますか?')) {
                 this.historyManager.clear();
+                this.history = [];
             }
-        },
-
-        get history() {
-            return this.historyManager.getRecent(10);
         }
     };
 }

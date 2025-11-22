@@ -4,13 +4,15 @@ import { HistoryManager } from '../utils/HistoryManager.js';
  * 抽選ボックスツールのAlpineコンポーネント
  */
 export function lotteryBox() {
+    const historyManager = new HistoryManager('lotteryHistory');
     return {
         items: '',
         pool: [],
         drawnItems: [],
         currentWinner: '',
         isStarted: false,
-        historyManager: new HistoryManager('lotteryHistory'),
+        historyManager: historyManager,
+        history: [],
         animating: false,
 
         init() {
@@ -19,6 +21,8 @@ export function lotteryBox() {
             if (savedItems) {
                 this.items = savedItems;
             }
+
+            this.history = this.historyManager.getRecent(10);
         },
 
         start() {
@@ -71,6 +75,7 @@ export function lotteryBox() {
                 order: `${this.drawnItems.length}番目`,
                 time: time
             });
+            this.history = this.historyManager.getRecent(10);
         },
 
         reset() {
@@ -87,11 +92,8 @@ export function lotteryBox() {
         clearHistory() {
             if (confirm('履歴をすべて削除しますか?')) {
                 this.historyManager.clear();
+                this.history = [];
             }
-        },
-
-        get history() {
-            return this.historyManager.getRecent(10);
         },
 
         get remaining() {

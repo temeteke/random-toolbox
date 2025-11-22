@@ -4,12 +4,14 @@ import { HistoryManager } from '../utils/HistoryManager.js';
  * 日付ランダマイザーツールのAlpineコンポーネント
  */
 export function dateRandomizer() {
+    const historyManager = new HistoryManager('dateHistory');
     return {
         startDate: '',
         endDate: '',
         selectedDays: [0, 1, 2, 3, 4, 5, 6], // すべての曜日を初期選択
         randomDate: '',
-        historyManager: new HistoryManager('dateHistory'),
+        historyManager: historyManager,
+        history: [],
         animating: false,
 
         init() {
@@ -20,6 +22,8 @@ export function dateRandomizer() {
 
             this.startDate = this.formatDateForInput(today);
             this.endDate = this.formatDateForInput(oneYearLater);
+
+            this.history = this.historyManager.getRecent(10);
         },
 
         formatDateForInput(date) {
@@ -101,16 +105,14 @@ export function dateRandomizer() {
                 date: dateStr,
                 time: time
             });
+            this.history = this.historyManager.getRecent(10);
         },
 
         clearHistory() {
             if (confirm('履歴をすべて削除しますか?')) {
                 this.historyManager.clear();
+                this.history = [];
             }
-        },
-
-        get history() {
-            return this.historyManager.getRecent(10);
         }
     };
 }
