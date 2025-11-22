@@ -282,42 +282,160 @@ function saveRouletteHistory(item) {
     displayRouletteHistory();
 }
 
-// ルーレットホイールを構築
+// ルーレットホイールを構築（SVG方式）
 function buildRouletteWheel(items) {
-    const wheel = document.createElement('div');
+    const container = document.createElement('div');
+    container.className = 'roulette-wheel-svg';
+
+    // SVG要素を作成
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 200 200');
+    svg.setAttribute('width', '300');
+    svg.setAttribute('height', '300');
+
     const anglePerItem = 360 / items.length;
 
+    // 色のパターン
+    const colors = [
+        ['#667eea', '#764ba2'],
+        ['#f093fb', '#f5576c'],
+        ['#4facfe', '#00f2fe'],
+        ['#43e97b', '#38f9d7'],
+        ['#fa709a', '#fee140'],
+        ['#30cfd0', '#330867'],
+        ['#a8edea', '#fed6e3'],
+        ['#ff9a9e', '#fecfef']
+    ];
+
     items.forEach((item, index) => {
-        const segment = document.createElement('div');
-        segment.className = 'roulette-item';
+        const startAngle = (anglePerItem * index - 90) * Math.PI / 180; // -90度で上から始める
+        const endAngle = (anglePerItem * (index + 1) - 90) * Math.PI / 180;
 
-        const angle = anglePerItem * index;
-        const rotation = angle + (anglePerItem / 2);
+        const cx = 100; // 中心X
+        const cy = 100; // 中心Y
+        const radius = 100;
 
-        // セグメントの形を計算（扇形）
-        const x1 = 50 + 50 * Math.cos((angle * Math.PI) / 180);
-        const y1 = 50 + 50 * Math.sin((angle * Math.PI) / 180);
-        const x2 = 50 + 50 * Math.cos(((angle + anglePerItem) * Math.PI) / 180);
-        const y2 = 50 + 50 * Math.sin(((angle + anglePerItem) * Math.PI) / 180);
+        // 扇形のパスを計算
+        const x1 = cx + radius * Math.cos(startAngle);
+        const y1 = cy + radius * Math.sin(startAngle);
+        const x2 = cx + radius * Math.cos(endAngle);
+        const y2 = cy + radius * Math.sin(endAngle);
 
-        segment.style.clipPath = `polygon(50% 50%, ${x1}% ${y1}%, ${x2}% ${y2}%)`;
+        // 大きな弧かどうか（180度以上か）
+        const largeArcFlag = anglePerItem > 180 ? 1 : 0;
 
-        const content = document.createElement('div');
-        content.className = 'roulette-item-content';
-        content.textContent = item;
-        content.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+        // グラデーション定義
+        const gradientId = `gradient-${index}`;
+        const defs = svg.querySelector('defs') || svg.insertBefore(
+            document.createElementNS('http://www.w3.org/2000/svg', 'defs'),
+            svg.firstChild
+        );
 
-        segment.appendChild(content);
-        wheel.appendChild(segment);
+        const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+        gradient.setAttribute('id', gradientId);
+        gradient.setAttribute('x1', '0%');
+        gradient.setAttribute('y1', '0%');
+        gradient.setAttribute('x2', '100%');
+        gradient.setAttribute('y2', '100%');
+
+        const colorPair = colors[index % colors.length];
+        const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        stop1.setAttribute('offset', '0%');
+        stop1.setAttribute('style', `stop-color:${colorPair[0]};stop-opacity:1`);
+
+        const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        stop2.setAttribute('offset', '100%');
+        stop2.setAttribute('style', `stop-color:${colorPair[1]};stop-opacity:1`);
+
+        gradient.appendChild(stop1);
+        gradient.appendChild(stop2);
+        defs.appendChild(gradient);
+
+        // 扇形のパス
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const pathData = `
+            M ${cx} ${cy}
+            L ${x1} ${y1}
+            A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}
+            Z
+        `;
+        path.setAttribute('d', pathData);
+        path.setAttribute('fill', `url(#${gradientId})`);
+        path.setAttribute('stroke', 'white');
+        path.setAttribute('stroke-width', '2');
+
+        svg.appendChild(path);
+
+        // テキストの配置
+        const midAngle = (startAngle + endAngle) / 2;
+        const textRadius = radius * 0.65; // 中心からテキストまでの距離
+        const textX = cx + textRadius * Math.cos(midAngle);
+        const textY = cy + textRadius * Math.sin(midAngle);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', textX);
+        text.setAttribute('y', textY);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('dominant-baseline', 'middle');
+        text.setAttribute('fill', 'white');
+        text.setAttribute('font-size', '14');
+        text.setAttribute('font-weight', 'bold');
+        text.setAttribute('style', 'filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));');
+
+        // テキストを回転（読みやすい向きに）
+        let textAngle = (anglePerItem * index + anglePerItem / 2);
+        // 下半分のテキストは180度回転させて読みやすくする
+        if (textAngle > 90 && textAngle < 270) {
+            textAngle += 180;
+        }
+        text.setAttribute('transform', `rotate(${textAngle} ${textX} ${textY})`);
+
+        // 長いテキストを折り返し
+        if (item.length > 8) {
+            const tspan1 = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+            tspan1.setAttribute('x', textX);
+            tspan1.setAttribute('dy', '-0.6em');
+            tspan1.textContent = item.substring(0, 8);
+
+            const tspan2 = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+            tspan2.setAttribute('x', textX);
+            tspan2.setAttribute('dy', '1.2em');
+            tspan2.textContent = item.substring(8, 16);
+
+            text.appendChild(tspan1);
+            text.appendChild(tspan2);
+        } else {
+            text.textContent = item;
+        }
+
+        svg.appendChild(text);
     });
 
     // 中央の円を追加
-    const center = document.createElement('div');
-    center.className = 'roulette-center';
-    center.textContent = '🎰';
-    wheel.appendChild(center);
+    const centerCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    centerCircle.setAttribute('cx', '100');
+    centerCircle.setAttribute('cy', '100');
+    centerCircle.setAttribute('r', '20');
+    centerCircle.setAttribute('fill', '#667eea');
+    centerCircle.setAttribute('stroke', 'white');
+    centerCircle.setAttribute('stroke-width', '3');
+    centerCircle.setAttribute('class', 'roulette-center');
 
-    return wheel;
+    svg.appendChild(centerCircle);
+
+    // 中央のアイコン
+    const centerText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    centerText.setAttribute('x', '100');
+    centerText.setAttribute('y', '100');
+    centerText.setAttribute('text-anchor', 'middle');
+    centerText.setAttribute('dominant-baseline', 'middle');
+    centerText.setAttribute('font-size', '20');
+    centerText.textContent = '🎰';
+
+    svg.appendChild(centerText);
+
+    container.appendChild(svg);
+    return container;
 }
 
 // ルーレットを回す
@@ -351,8 +469,8 @@ function spinRoulette() {
     rouletteWheel.innerHTML = '';
     rouletteWheel.appendChild(pointer);
 
-    const wheel = buildRouletteWheel(items);
-    rouletteWheel.appendChild(wheel);
+    const wheelContainer = buildRouletteWheel(items);
+    rouletteWheel.appendChild(wheelContainer);
 
     // ランダムに当選者を選択
     const winnerIndex = Math.floor(Math.random() * items.length);
@@ -389,15 +507,15 @@ function spinRoulette() {
             currentRotation = rotation;
         }
 
-        rouletteWheel.style.transform = `rotate(${rotation}deg)`;
+        wheelContainer.style.transform = `rotate(${rotation}deg)`;
 
         // 停止条件
         if (currentRotation >= targetAngle - 1 && velocity < 0.5) {
             clearInterval(spinInterval);
-            rouletteWheel.style.transform = `rotate(${targetAngle}deg)`;
+            wheelContainer.style.transform = `rotate(${targetAngle}deg)`;
 
             // 中央の円をアニメーション
-            const center = rouletteWheel.querySelector('.roulette-center');
+            const center = wheelContainer.querySelector('.roulette-center');
             if (center) {
                 center.classList.add('winner');
             }
