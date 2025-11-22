@@ -535,7 +535,18 @@
         </footer>
     </div>
 
-    <!-- main.jsがAlpine.jsを動的に読み込みます -->
+    <!-- Alpine.jsの自動起動を遅延 -->
+    <script>
+        window.deferLoadingAlpine = callback => {
+            // main.jsの読み込み完了を待つ
+            document.addEventListener('alpine:components-loaded', () => {
+                callback();
+            });
+        };
+    </script>
+    <!-- Alpine.jsを読み込む（自動起動を遅延） -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- main.jsを読み込んで関数を登録 -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>

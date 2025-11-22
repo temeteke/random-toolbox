@@ -81,7 +81,5 @@ window.tabManager = function() {
     };
 };
 
-// Alpine.jsを動的に読み込む
-const script = document.createElement('script');
-script.src = 'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js';
-document.body.appendChild(script);
+// すべてのコンポーネントが登録されたことを通知
+document.dispatchEvent(new CustomEvent('alpine:components-loaded'));
