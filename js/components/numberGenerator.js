@@ -1,0 +1,63 @@
+import { HistoryManager } from '../utils/HistoryManager.js';
+
+/**
+ * 数字生成ツールのAlpineコンポーネント
+ */
+export function numberGenerator() {
+    return {
+        min: 1,
+        max: 100,
+        result: null,
+        historyManager: new HistoryManager('randomHistory'),
+        animating: false,
+
+        init() {
+            // 初期化時に履歴を読み込む（Alpine.jsのリアクティビティで自動表示）
+        },
+
+        generate() {
+            const min = parseInt(this.min);
+            const max = parseInt(this.max);
+
+            // バリデーション
+            if (isNaN(min) || isNaN(max)) {
+                alert('有効な数値を入力してください');
+                return;
+            }
+
+            if (min >= max) {
+                alert('最小値は最大値より小さくしてください');
+                return;
+            }
+
+            // 乱数生成
+            const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+            this.result = randomNum;
+
+            // アニメーション
+            this.animating = true;
+            setTimeout(() => {
+                this.animating = false;
+            }, 500);
+
+            // 履歴に追加
+            const now = new Date();
+            const time = now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+            this.historyManager.add({
+                number: randomNum,
+                range: `${min}-${max}`,
+                time: time
+            });
+        },
+
+        clearHistory() {
+            if (confirm('履歴をすべて削除しますか?')) {
+                this.historyManager.clear();
+            }
+        },
+
+        get history() {
+            return this.historyManager.getRecent(10);
+        }
+    };
+}
