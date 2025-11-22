@@ -537,11 +537,22 @@
 
     <!-- Alpine.jsの自動起動を遅延 -->
     <script>
+        console.log('[HTML] window.deferLoadingAlpine設定');
         window.deferLoadingAlpine = callback => {
-            // main.jsの読み込み完了を待つ
-            document.addEventListener('alpine:components-loaded', () => {
+            console.log('[HTML] deferLoadingAlpine呼び出し - Alpine.jsが読み込まれました');
+
+            // すでにコンポーネントが登録済みかチェック
+            if (window.alpineComponentsLoaded) {
+                console.log('[HTML] コンポーネント登録済み - すぐにAlpine.js起動');
                 callback();
-            });
+            } else {
+                console.log('[HTML] コンポーネント登録待機中');
+                // main.jsの読み込み完了を待つ
+                document.addEventListener('alpine:components-loaded', () => {
+                    console.log('[HTML] alpine:components-loadedイベント受信 - Alpine.js起動');
+                    callback();
+                });
+            }
         };
     </script>
     <!-- Alpine.jsを読み込む（自動起動を遅延） -->
