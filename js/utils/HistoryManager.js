@@ -2,7 +2,7 @@
  * 履歴管理の共通クラス
  * 全てのツールで使用される履歴機能を統一的に管理
  */
-export class HistoryManager {
+class HistoryManager {
     constructor(storageKey, maxItems = 50) {
         this.storageKey = storageKey;
         this.maxItems = maxItems;
@@ -86,3 +86,6 @@ export class HistoryManager {
         return this.items.length;
     }
 }
+
+// グローバルに登録
+window.HistoryManager = HistoryManager;

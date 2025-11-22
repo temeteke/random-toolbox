@@ -1,5 +1,3 @@
-import { HistoryManager } from '../utils/HistoryManager.js';
-
 /**
  * 数字生成ツールのAlpineコンポーネント
  */
