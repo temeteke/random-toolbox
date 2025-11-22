@@ -9,9 +9,12 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
-    <div class="container">
+    <div class="container" x-data="tabManager()">
         <header>
             <h1>🎲 Random Toolbox</h1>
             <p class="subtitle">ランダム生成ツール</p>
@@ -21,131 +24,153 @@
             <div class="card">
                 <!-- タブナビゲーション -->
                 <div class="tabs">
-                    <button class="tab-btn active" data-tab="number">
+                    <button @click="switchTab('number')" :class="{ 'tab-btn': true, 'active': activeTab === 'number' }">
                         🔢 数字
                     </button>
-                    <button class="tab-btn" data-tab="list">
+                    <button @click="switchTab('list')" :class="{ 'tab-btn': true, 'active': activeTab === 'list' }">
                         📋 リスト
                     </button>
-                    <button class="tab-btn" data-tab="roulette">
+                    <button @click="switchTab('roulette')" :class="{ 'tab-btn': true, 'active': activeTab === 'roulette' }">
                         🎰 ルーレット
                     </button>
-                    <button class="tab-btn" data-tab="dice">
+                    <button @click="switchTab('dice')" :class="{ 'tab-btn': true, 'active': activeTab === 'dice' }">
                         🎲 サイコロ
                     </button>
-                    <button class="tab-btn" data-tab="card">
+                    <button @click="switchTab('card')" :class="{ 'tab-btn': true, 'active': activeTab === 'card' }">
                         🃏 カード
                     </button>
-                    <button class="tab-btn" data-tab="color">
+                    <button @click="switchTab('color')" :class="{ 'tab-btn': true, 'active': activeTab === 'color' }">
                         🎨 カラー
                     </button>
-                    <button class="tab-btn" data-tab="date">
+                    <button @click="switchTab('date')" :class="{ 'tab-btn': true, 'active': activeTab === 'date' }">
                         📅 日付
                     </button>
-                    <button class="tab-btn" data-tab="password">
+                    <button @click="switchTab('password')" :class="{ 'tab-btn': true, 'active': activeTab === 'password' }">
                         ✨ パスワード
                     </button>
-                    <button class="tab-btn" data-tab="decision">
+                    <button @click="switchTab('decision')" :class="{ 'tab-btn': true, 'active': activeTab === 'decision' }">
                         🎯 決定
                     </button>
-                    <button class="tab-btn" data-tab="shuffle">
+                    <button @click="switchTab('shuffle')" :class="{ 'tab-btn': true, 'active': activeTab === 'shuffle' }">
                         🔀 シャッフル
                     </button>
-                    <button class="tab-btn" data-tab="lottery">
+                    <button @click="switchTab('lottery')" :class="{ 'tab-btn': true, 'active': activeTab === 'lottery' }">
                         🎊 抽選
                     </button>
                 </div>
 
                 <!-- 数字生成タブ -->
-                <div id="numberTab" class="tab-content active">
+                <div x-show="activeTab === 'number'" class="tab-content" x-data="numberGenerator()">
                     <div class="input-group">
                         <label for="min">最小値:</label>
-                        <input type="number" id="min" value="1" class="number-input">
+                        <input type="number" x-model="min" @keypress.enter="generate()" class="number-input">
                     </div>
 
                     <div class="input-group">
                         <label for="max">最大値:</label>
-                        <input type="number" id="max" value="100" class="number-input">
+                        <input type="number" x-model="max" @keypress.enter="generate()" class="number-input">
                     </div>
 
-                    <button id="generateBtn" class="generate-btn">
+                    <button @click="generate()" class="generate-btn">
                         乱数を生成
                     </button>
 
-                    <div id="result" class="result">
+                    <div class="result">
                         <div class="result-label">生成された数字</div>
-                        <div id="randomNumber" class="random-number">?</div>
+                        <div class="random-number" :class="{ 'fade-in': animating }" x-text="result ?? '?'"></div>
                     </div>
 
                     <div class="history-section">
                         <h3>履歴</h3>
-                        <button id="clearHistoryBtn" class="clear-btn">履歴をクリア</button>
-                        <ul id="historyList" class="history-list"></ul>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.time">
+                                <li>
+                                    <span class="number" x-text="item.number"></span>
+                                    <span class="time" x-text="`${item.range} - ${item.time}`"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
 
                 <!-- リスト選択タブ -->
-                <div id="listTab" class="tab-content">
+                <div x-show="activeTab === 'list'" class="tab-content" x-data="listSelector()">
                     <div class="input-group">
-                        <label for="listItems">リスト項目（1行に1つ）:</label>
-                        <textarea id="listItems" class="list-input" rows="8" placeholder="りんご&#10;バナナ&#10;みかん&#10;ぶどう&#10;いちご"></textarea>
+                        <label>リスト項目（1行に1つ）:</label>
+                        <textarea x-model="listItems" class="list-input" rows="8" placeholder="りんご&#10;バナナ&#10;みかん&#10;ぶどう&#10;いちご"></textarea>
                     </div>
 
-                    <button id="selectBtn" class="generate-btn">
+                    <button @click="select()" class="generate-btn">
                         ランダムに選択
                     </button>
 
-                    <div id="listResult" class="result">
+                    <div class="result">
                         <div class="result-label">選ばれた項目</div>
-                        <div id="selectedItem" class="random-number">?</div>
+                        <div class="random-number" :class="{ 'fade-in': animating }" x-text="result ?? '?'"></div>
                     </div>
 
                     <div class="history-section">
                         <h3>履歴</h3>
-                        <button id="clearListHistoryBtn" class="clear-btn">履歴をクリア</button>
-                        <ul id="listHistoryList" class="history-list"></ul>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.time">
+                                <li>
+                                    <span class="number" x-text="item.item"></span>
+                                    <span class="time" x-text="item.time"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
 
                 <!-- ルーレットタブ -->
-                <div id="rouletteTab" class="tab-content">
+                <div x-show="activeTab === 'roulette'" class="tab-content" x-data="roulette()">
                     <div class="input-group">
-                        <label for="rouletteItems">ルーレット項目（1行に1つ）:</label>
-                        <textarea id="rouletteItems" class="list-input" rows="8" placeholder="選択肢1&#10;選択肢2&#10;選択肢3&#10;選択肢4&#10;選択肢5"></textarea>
+                        <label>ルーレット項目（1行に1つ）:</label>
+                        <textarea x-model="items" @input="saveItems()" class="list-input" rows="8" placeholder="選択肢1&#10;選択肢2&#10;選択肢3&#10;選択肢4&#10;選択肢5"></textarea>
                     </div>
 
-                    <button id="spinBtn" class="generate-btn">
+                    <button @click="spin()" class="generate-btn" :disabled="isSpinning">
                         🎰 ルーレットを回す
                     </button>
 
                     <div class="roulette-container">
-                        <div class="roulette-wheel" id="rouletteWheel">
+                        <div class="roulette-wheel" :style="`transform: rotate(${wheelRotation}deg); transition: ${isSpinning ? 'transform 4s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none'};`">
                             <div class="roulette-pointer">▼</div>
+                            <div x-html="buildRouletteWheel()"></div>
                         </div>
                     </div>
 
-                    <div id="rouletteResult" class="result" style="display: none;">
+                    <div class="result" x-show="winner" x-transition>
                         <div class="result-label">当たり!</div>
-                        <div id="rouletteWinner" class="random-number">?</div>
+                        <div class="random-number" x-text="winner"></div>
                     </div>
 
                     <div class="history-section">
                         <h3>履歴</h3>
-                        <button id="clearRouletteHistoryBtn" class="clear-btn">履歴をクリア</button>
-                        <ul id="rouletteHistoryList" class="history-list"></ul>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.time">
+                                <li>
+                                    <span class="number" x-text="item.item"></span>
+                                    <span class="time" x-text="item.time"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
 
                 <!-- サイコロタブ -->
-                <div id="diceTab" class="tab-content">
+                <div x-show="activeTab === 'dice'" class="tab-content" x-data="diceRoller()">
                     <div class="input-group">
-                        <label for="diceCount">サイコロの数:</label>
-                        <input type="number" id="diceCount" value="2" min="1" max="10" class="number-input">
+                        <label>サイコロの数:</label>
+                        <input type="number" x-model="count" min="1" max="10" class="number-input">
                     </div>
 
                     <div class="input-group">
-                        <label for="diceSides">サイコロの種類:</label>
-                        <select id="diceSides" class="number-input">
+                        <label>サイコロの種類:</label>
+                        <select x-model="sides" class="number-input">
                             <option value="6">6面ダイス (D6)</option>
                             <option value="8">8面ダイス (D8)</option>
                             <option value="10">10面ダイス (D10)</option>
@@ -155,235 +180,351 @@
                         </select>
                     </div>
 
-                    <button id="rollDiceBtn" class="generate-btn">
+                    <button @click="roll()" class="generate-btn">
                         🎲 サイコロを振る
                     </button>
 
-                    <div id="diceResult" class="result">
+                    <div class="result">
                         <div class="result-label">結果</div>
-                        <div id="diceValues" class="dice-values">?</div>
-                        <div id="diceTotal" class="dice-total">合計: -</div>
+                        <div class="dice-values" :class="{ 'fade-in': animating }" x-text="displayValues"></div>
+                        <div class="dice-total" x-text="values.length > 0 ? `合計: ${total}` : '合計: -'"></div>
                     </div>
 
                     <div class="history-section">
                         <h3>履歴</h3>
-                        <button id="clearDiceHistoryBtn" class="clear-btn">履歴をクリア</button>
-                        <ul id="diceHistoryList" class="history-list"></ul>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.time">
+                                <li>
+                                    <span class="number" x-text="item.result"></span>
+                                    <span class="time" x-text="`${item.config} - ${item.time}`"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
 
                 <!-- カードドロータブ -->
-                <div id="cardTab" class="tab-content">
+                <div x-show="activeTab === 'card'" class="tab-content" x-data="cardDraw()">
                     <div class="input-group">
-                        <label for="cardCount">引く枚数:</label>
-                        <input type="number" id="cardCount" value="1" min="1" max="52" class="number-input">
+                        <label>引く枚数:</label>
+                        <input type="number" x-model="cardCount" min="1" max="52" class="number-input">
                     </div>
 
                     <div class="input-group">
                         <label>
-                            <input type="checkbox" id="includeJoker">
+                            <input type="checkbox" x-model="includeJoker">
                             ジョーカーを含む (2枚)
                         </label>
                     </div>
 
-                    <button id="drawCardBtn" class="generate-btn">
+                    <button @click="draw()" class="generate-btn">
                         🃏 カードを引く
                     </button>
 
-                    <div id="cardResult" class="result">
+                    <div class="result">
                         <div class="result-label">引いたカード</div>
-                        <div id="drawnCards" class="card-display">?</div>
+                        <div class="card-display" :class="{ 'fade-in': animating }" x-text="displayCards"></div>
                     </div>
 
                     <div class="history-section">
                         <h3>履歴</h3>
-                        <button id="clearCardHistoryBtn" class="clear-btn">履歴をクリア</button>
-                        <ul id="cardHistoryList" class="history-list"></ul>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.time">
+                                <li>
+                                    <span class="number" x-text="item.cards"></span>
+                                    <span class="time" x-text="item.time"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
 
                 <!-- カラーピッカータブ -->
-                <div id="colorTab" class="tab-content">
+                <div x-show="activeTab === 'color'" class="tab-content" x-data="colorPicker()">
                     <div class="input-group">
                         <label>生成タイプ:</label>
-                        <select id="colorType" class="number-input">
+                        <select x-model="colorType" class="number-input">
                             <option value="single">単色</option>
                             <option value="palette">カラーパレット (5色)</option>
                         </select>
                     </div>
 
-                    <button id="generateColorBtn" class="generate-btn">
+                    <button @click="generate()" class="generate-btn">
                         🎨 色を生成
                     </button>
 
-                    <div id="colorResult" class="result">
+                    <div class="result">
                         <div class="result-label">生成された色</div>
-                        <div id="colorDisplay" class="color-display"></div>
+                        <div class="color-display" :class="{ 'fade-in': animating }">
+                            <template x-if="generatedColor">
+                                <div class="single-color">
+                                    <div class="color-box" :style="`background-color: ${generatedColor.hex};`" @click="copyColor(generatedColor.hex)"></div>
+                                    <div class="color-info">
+                                        <div x-text="generatedColor.hex"></div>
+                                        <div x-text="generatedColor.rgb"></div>
+                                    </div>
+                                </div>
+                            </template>
+                            <template x-if="generatedPalette.length > 0">
+                                <div class="color-palette">
+                                    <template x-for="color in generatedPalette" :key="color">
+                                        <div class="palette-color">
+                                            <div class="color-box" :style="`background-color: ${color};`" @click="copyColor(color)"></div>
+                                            <div class="color-code" x-text="color"></div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
                     </div>
 
                     <div class="history-section">
                         <h3>お気に入り</h3>
-                        <button id="clearColorHistoryBtn" class="clear-btn">クリア</button>
-                        <ul id="colorHistoryList" class="history-list color-history"></ul>
+                        <button @click="clearHistory()" class="clear-btn">クリア</button>
+                        <ul class="history-list color-history">
+                            <template x-for="item in history" :key="item.time">
+                                <li>
+                                    <template x-if="item.type === 'single'">
+                                        <div>
+                                            <span class="color-box-small" :style="`background-color: ${item.color};`"></span>
+                                            <span x-text="item.color"></span>
+                                            <span class="time" x-text="item.time"></span>
+                                        </div>
+                                    </template>
+                                    <template x-if="item.type === 'palette'">
+                                        <div>
+                                            <template x-for="color in item.colors" :key="color">
+                                                <span class="color-box-small" :style="`background-color: ${color};`"></span>
+                                            </template>
+                                            <span class="time" x-text="item.time"></span>
+                                        </div>
+                                    </template>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
 
                 <!-- 日付ランダマイザータブ -->
-                <div id="dateTab" class="tab-content">
+                <div x-show="activeTab === 'date'" class="tab-content" x-data="dateRandomizer()">
                     <div class="input-group">
-                        <label for="dateStart">開始日:</label>
-                        <input type="date" id="dateStart" class="number-input">
+                        <label>開始日:</label>
+                        <input type="date" x-model="startDate" class="number-input">
                     </div>
 
                     <div class="input-group">
-                        <label for="dateEnd">終了日:</label>
-                        <input type="date" id="dateEnd" class="number-input">
+                        <label>終了日:</label>
+                        <input type="date" x-model="endDate" class="number-input">
                     </div>
 
                     <div class="input-group">
                         <label>曜日フィルター:</label>
                         <div class="checkbox-group">
-                            <label><input type="checkbox" class="dayFilter" value="0" checked> 日</label>
-                            <label><input type="checkbox" class="dayFilter" value="1" checked> 月</label>
-                            <label><input type="checkbox" class="dayFilter" value="2" checked> 火</label>
-                            <label><input type="checkbox" class="dayFilter" value="3" checked> 水</label>
-                            <label><input type="checkbox" class="dayFilter" value="4" checked> 木</label>
-                            <label><input type="checkbox" class="dayFilter" value="5" checked> 金</label>
-                            <label><input type="checkbox" class="dayFilter" value="6" checked> 土</label>
+                            <label><input type="checkbox" @change="toggleDay(0)" :checked="isDaySelected(0)"> 日</label>
+                            <label><input type="checkbox" @change="toggleDay(1)" :checked="isDaySelected(1)"> 月</label>
+                            <label><input type="checkbox" @change="toggleDay(2)" :checked="isDaySelected(2)"> 火</label>
+                            <label><input type="checkbox" @change="toggleDay(3)" :checked="isDaySelected(3)"> 水</label>
+                            <label><input type="checkbox" @change="toggleDay(4)" :checked="isDaySelected(4)"> 木</label>
+                            <label><input type="checkbox" @change="toggleDay(5)" :checked="isDaySelected(5)"> 金</label>
+                            <label><input type="checkbox" @change="toggleDay(6)" :checked="isDaySelected(6)"> 土</label>
                         </div>
                     </div>
 
-                    <button id="generateDateBtn" class="generate-btn">
+                    <button @click="generate()" class="generate-btn">
                         📅 日付を生成
                     </button>
 
-                    <div id="dateResult" class="result">
+                    <div class="result">
                         <div class="result-label">生成された日付</div>
-                        <div id="randomDate" class="random-number">?</div>
+                        <div class="random-number" :class="{ 'fade-in': animating }" x-text="randomDate || '?'"></div>
                     </div>
 
                     <div class="history-section">
                         <h3>履歴</h3>
-                        <button id="clearDateHistoryBtn" class="clear-btn">履歴をクリア</button>
-                        <ul id="dateHistoryList" class="history-list"></ul>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.time">
+                                <li>
+                                    <span class="number" x-text="item.date"></span>
+                                    <span class="time" x-text="item.time"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
 
                 <!-- パスワード生成器タブ -->
-                <div id="passwordTab" class="tab-content">
+                <div x-show="activeTab === 'password'" class="tab-content" x-data="passwordGenerator()">
                     <div class="input-group">
-                        <label for="passwordLength">文字数: <span id="passwordLengthValue">16</span></label>
-                        <input type="range" id="passwordLength" min="8" max="128" value="16" class="slider">
+                        <label>文字数: <span x-text="length"></span></label>
+                        <input type="range" x-model="length" min="8" max="128" class="slider">
                     </div>
 
                     <div class="input-group">
                         <label>文字種別:</label>
                         <div class="checkbox-group">
-                            <label><input type="checkbox" id="includeUppercase" checked> 大文字 (A-Z)</label>
-                            <label><input type="checkbox" id="includeLowercase" checked> 小文字 (a-z)</label>
-                            <label><input type="checkbox" id="includeNumbers" checked> 数字 (0-9)</label>
-                            <label><input type="checkbox" id="includeSymbols"> 記号 (!@#$%...)</label>
+                            <label><input type="checkbox" x-model="includeUppercase"> 大文字 (A-Z)</label>
+                            <label><input type="checkbox" x-model="includeLowercase"> 小文字 (a-z)</label>
+                            <label><input type="checkbox" x-model="includeNumbers"> 数字 (0-9)</label>
+                            <label><input type="checkbox" x-model="includeSymbols"> 記号 (!@#$%...)</label>
                         </div>
                     </div>
 
-                    <button id="generatePasswordBtn" class="generate-btn">
+                    <button @click="generate()" class="generate-btn">
                         ✨ パスワードを生成
                     </button>
 
-                    <div id="passwordResult" class="result">
+                    <div class="result">
                         <div class="result-label">生成されたパスワード</div>
-                        <div id="generatedPassword" class="password-display">?</div>
-                        <button id="copyPasswordBtn" class="copy-btn" style="display: none;">📋 コピー</button>
-                        <div id="passwordStrength" class="password-strength"></div>
+                        <div class="password-display" :class="{ 'fade-in': animating }" x-text="generatedPassword || '?'"></div>
+                        <button @click="copyPassword()" class="copy-btn" x-show="generatedPassword" x-transition>📋 コピー</button>
+                        <div class="password-strength" x-show="strength">
+                            <div class="strength-bar">
+                                <div class="strength-fill" :style="`width: ${strengthPercentage}%; background-color: ${strength?.color};`"></div>
+                            </div>
+                            <div class="strength-label" x-text="strength?.label" :style="`color: ${strength?.color};`"></div>
+                        </div>
                     </div>
 
                     <div class="history-section">
                         <h3>履歴</h3>
-                        <button id="clearPasswordHistoryBtn" class="clear-btn">履歴をクリア</button>
-                        <ul id="passwordHistoryList" class="history-list"></ul>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.time">
+                                <li>
+                                    <span class="number" x-text="item.password"></span>
+                                    <span class="time" x-text="`${item.config} - ${item.time}`"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
 
                 <!-- 決定ツールタブ -->
-                <div id="decisionTab" class="tab-content">
+                <div x-show="activeTab === 'decision'" class="tab-content" x-data="decisionTool()">
                     <div class="input-group">
-                        <label for="decisionOptions">選択肢（1行に1つ、2〜5個）:</label>
-                        <textarea id="decisionOptions" class="list-input" rows="5" placeholder="はい&#10;いいえ"></textarea>
+                        <label>選択肢（1行に1つ、2〜5個）:</label>
+                        <textarea x-model="options" @input="saveOptions()" class="list-input" rows="5" placeholder="はい&#10;いいえ"></textarea>
                     </div>
 
-                    <button id="makeDecisionBtn" class="generate-btn">
+                    <button @click="makeDecision()" class="generate-btn">
                         🎯 決定する
                     </button>
 
-                    <div id="decisionResult" class="result">
+                    <div class="result">
                         <div class="result-label">決定!</div>
-                        <div id="decisionAnswer" class="random-number">?</div>
+                        <div class="random-number" :class="{ 'fade-in': animating }" x-text="decision || '?'"></div>
                     </div>
 
                     <div class="history-section">
                         <h3>履歴</h3>
-                        <button id="clearDecisionHistoryBtn" class="clear-btn">履歴をクリア</button>
-                        <ul id="decisionHistoryList" class="history-list"></ul>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.time">
+                                <li>
+                                    <span class="number" x-text="item.decision"></span>
+                                    <span class="time" x-text="`(${item.options}) - ${item.time}`"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
 
                 <!-- シャッフラータブ -->
-                <div id="shuffleTab" class="tab-content">
+                <div x-show="activeTab === 'shuffle'" class="tab-content" x-data="shuffler()">
                     <div class="input-group">
-                        <label for="shuffleItems">シャッフルするリスト（1行に1つ）:</label>
-                        <textarea id="shuffleItems" class="list-input" rows="8" placeholder="項目1&#10;項目2&#10;項目3&#10;項目4&#10;項目5"></textarea>
+                        <label>シャッフルするリスト（1行に1つ）:</label>
+                        <textarea x-model="items" @input="saveItems()" class="list-input" rows="8" placeholder="項目1&#10;項目2&#10;項目3&#10;項目4&#10;項目5"></textarea>
                     </div>
 
                     <div class="input-group">
-                        <label for="groupCount">グループ数 (0 = 分割なし):</label>
-                        <input type="number" id="groupCount" value="0" min="0" max="20" class="number-input">
+                        <label>グループ数 (0 = 分割なし):</label>
+                        <input type="number" x-model="groupCount" min="0" max="20" class="number-input">
                     </div>
 
-                    <button id="shuffleBtn" class="generate-btn">
+                    <button @click="shuffle()" class="generate-btn">
                         🔀 シャッフル
                     </button>
 
-                    <div id="shuffleResult" class="result">
+                    <div class="result" x-show="shuffledResult">
                         <div class="result-label">シャッフル結果</div>
-                        <div id="shuffledList" class="shuffled-list"></div>
+                        <div class="shuffled-list" :class="{ 'fade-in': animating }">
+                            <template x-if="shuffledResult?.type === 'list'">
+                                <ol>
+                                    <template x-for="item in shuffledResult.items" :key="item">
+                                        <li x-text="item"></li>
+                                    </template>
+                                </ol>
+                            </template>
+                            <template x-if="shuffledResult?.type === 'groups'">
+                                <div>
+                                    <template x-for="(group, index) in shuffledResult.groups" :key="index">
+                                        <div class="group">
+                                            <h4 x-text="`グループ ${index + 1}`"></h4>
+                                            <ul>
+                                                <template x-for="item in group" :key="item">
+                                                    <li x-text="item"></li>
+                                                </template>
+                                            </ul>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
                     </div>
 
                     <div class="history-section">
                         <h3>履歴</h3>
-                        <button id="clearShuffleHistoryBtn" class="clear-btn">履歴をクリア</button>
-                        <ul id="shuffleHistoryList" class="history-list"></ul>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.time">
+                                <li>
+                                    <span class="number" x-text="item.result"></span>
+                                    <span class="time" x-text="`${item.config} - ${item.time}`"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
 
                 <!-- 抽選ボックスタブ -->
-                <div id="lotteryTab" class="tab-content">
+                <div x-show="activeTab === 'lottery'" class="tab-content" x-data="lotteryBox()">
                     <div class="input-group">
-                        <label for="lotteryItems">抽選項目（1行に1つ）:</label>
-                        <textarea id="lotteryItems" class="list-input" rows="8" placeholder="参加者1&#10;参加者2&#10;参加者3&#10;参加者4&#10;参加者5"></textarea>
+                        <label>抽選項目（1行に1つ）:</label>
+                        <textarea x-model="items" @input="saveItems()" class="list-input" rows="8" placeholder="参加者1&#10;参加者2&#10;参加者3&#10;参加者4&#10;参加者5"></textarea>
                     </div>
 
-                    <button id="startLotteryBtn" class="generate-btn">
+                    <button @click="start()" class="generate-btn" x-show="!isStarted">
                         🎊 抽選を開始
                     </button>
 
-                    <button id="drawLotteryBtn" class="generate-btn" style="display: none;">
+                    <button @click="draw()" class="generate-btn" x-show="isStarted && !isComplete">
                         🎁 次を引く
                     </button>
 
-                    <button id="resetLotteryBtn" class="secondary-btn" style="display: none;">
+                    <button @click="reset()" class="secondary-btn" x-show="isStarted">
                         🔄 リセット
                     </button>
 
-                    <div id="lotteryResult" class="result" style="display: none;">
+                    <div class="result" x-show="currentWinner" x-transition>
                         <div class="result-label">当選!</div>
-                        <div id="lotteryWinner" class="random-number">?</div>
-                        <div id="lotteryRemaining" class="lottery-remaining">残り: -</div>
+                        <div class="random-number" :class="{ 'fade-in': animating }" x-text="currentWinner"></div>
+                        <div class="lottery-remaining" x-text="`残り: ${remaining}項目`"></div>
                     </div>
 
                     <div class="history-section">
                         <h3>抽選結果</h3>
-                        <button id="clearLotteryHistoryBtn" class="clear-btn">クリア</button>
-                        <ul id="lotteryHistoryList" class="history-list"></ul>
+                        <button @click="clearHistory()" class="clear-btn">クリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.time">
+                                <li>
+                                    <span class="number" x-text="item.winner"></span>
+                                    <span class="time" x-text="`${item.order} - ${item.time}`"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -397,6 +538,6 @@
         </footer>
     </div>
 
-    <script src="app.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
