@@ -3,7 +3,7 @@ import { HistoryManager } from '../utils/HistoryManager.js';
 /**
  * カードドローツールのAlpineコンポーネント
  */
-export function cardDraw() {
+function cardDraw() {
     const historyManager = new HistoryManager('cardHistory');
     return {
         cardCount: 5,
@@ -79,3 +79,5 @@ export function cardDraw() {
         }
     };
 }
+
+window.cardDraw = cardDraw;

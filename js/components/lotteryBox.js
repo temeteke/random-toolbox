@@ -3,7 +3,7 @@ import { HistoryManager } from '../utils/HistoryManager.js';
 /**
  * 抽選ボックスツールのAlpineコンポーネント
  */
-export function lotteryBox() {
+function lotteryBox() {
     const historyManager = new HistoryManager('lotteryHistory');
     return {
         items: '',
@@ -105,3 +105,5 @@ export function lotteryBox() {
         }
     };
 }
+
+window.lotteryBox = lotteryBox;

@@ -3,7 +3,7 @@ import { HistoryManager } from '../utils/HistoryManager.js';
 /**
  * ルーレットツールのAlpineコンポーネント
  */
-export function roulette() {
+function roulette() {
     const historyManager = new HistoryManager('rouletteHistory');
     return {
         items: '',
@@ -172,3 +172,5 @@ export function roulette() {
         }
     };
 }
+
+window.roulette = roulette;

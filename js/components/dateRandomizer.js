@@ -3,7 +3,7 @@ import { HistoryManager } from '../utils/HistoryManager.js';
 /**
  * 日付ランダマイザーツールのAlpineコンポーネント
  */
-export function dateRandomizer() {
+function dateRandomizer() {
     const historyManager = new HistoryManager('dateHistory');
     return {
         startDate: '',
@@ -116,3 +116,5 @@ export function dateRandomizer() {
         }
     };
 }
+
+window.dateRandomizer = dateRandomizer;

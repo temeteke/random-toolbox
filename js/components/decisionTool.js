@@ -3,7 +3,7 @@ import { HistoryManager } from '../utils/HistoryManager.js';
 /**
  * 決定ツールのAlpineコンポーネント
  */
-export function decisionTool() {
+function decisionTool() {
     const historyManager = new HistoryManager('decisionHistory');
     return {
         options: 'はい\nいいえ',
@@ -69,3 +69,5 @@ export function decisionTool() {
         }
     };
 }
+
+window.decisionTool = decisionTool;
