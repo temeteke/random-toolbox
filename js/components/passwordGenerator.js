@@ -4,6 +4,7 @@ import { HistoryManager } from '../utils/HistoryManager.js';
  * パスワード生成器のAlpineコンポーネント
  */
 export function passwordGenerator() {
+    const historyManager = new HistoryManager('passwordHistory');
     return {
         length: 16,
         includeUppercase: true,
@@ -12,8 +13,13 @@ export function passwordGenerator() {
         includeSymbols: true,
         generatedPassword: '',
         strength: null,
-        historyManager: new HistoryManager('passwordHistory'),
+        historyManager: historyManager,
+        history: [],
         animating: false,
+
+        init() {
+            this.history = this.historyManager.getRecent(10);
+        },
 
         generate() {
             const length = parseInt(this.length);
@@ -65,6 +71,7 @@ export function passwordGenerator() {
                 config: config,
                 time: time
             });
+            this.history = this.historyManager.getRecent(10);
         },
 
         calculatePasswordStrength(password, charTypes) {
@@ -109,11 +116,8 @@ export function passwordGenerator() {
         clearHistory() {
             if (confirm('履歴をすべて削除しますか?')) {
                 this.historyManager.clear();
+                this.history = [];
             }
-        },
-
-        get history() {
-            return this.historyManager.getRecent(10);
         },
 
         get strengthPercentage() {

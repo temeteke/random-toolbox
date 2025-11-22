@@ -4,13 +4,19 @@ import { HistoryManager } from '../utils/HistoryManager.js';
  * サイコロツールのAlpineコンポーネント
  */
 export function diceRoller() {
+    const historyManager = new HistoryManager('diceHistory');
     return {
         count: 1,
         sides: 6,
         values: [],
         total: 0,
-        historyManager: new HistoryManager('diceHistory'),
+        historyManager: historyManager,
+        history: [],
         animating: false,
+
+        init() {
+            this.history = this.historyManager.getRecent(10);
+        },
 
         roll() {
             const count = parseInt(this.count);
@@ -42,16 +48,14 @@ export function diceRoller() {
                 config: `${count}D${sides}`,
                 time: time
             });
+            this.history = this.historyManager.getRecent(10);
         },
 
         clearHistory() {
             if (confirm('履歴をすべて削除しますか?')) {
                 this.historyManager.clear();
+                this.history = [];
             }
-        },
-
-        get history() {
-            return this.historyManager.getRecent(10);
         },
 
         get displayValues() {

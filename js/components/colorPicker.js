@@ -4,12 +4,18 @@ import { HistoryManager } from '../utils/HistoryManager.js';
  * カラーピッカーツールのAlpineコンポーネント
  */
 export function colorPicker() {
+    const historyManager = new HistoryManager('colorHistory');
     return {
         colorType: 'single',
         generatedColor: null,
         generatedPalette: [],
-        historyManager: new HistoryManager('colorHistory'),
+        historyManager: historyManager,
+        history: [],
         animating: false,
+
+        init() {
+            this.history = this.historyManager.getRecent(10);
+        },
 
         generate() {
             if (this.colorType === 'single') {
@@ -30,6 +36,7 @@ export function colorPicker() {
                     color: color,
                     time: time
                 });
+                this.history = this.historyManager.getRecent(10);
             } else {
                 const baseColor = this.randomColor();
                 const colors = this.generateHarmoniousPalette(baseColor);
@@ -45,6 +52,7 @@ export function colorPicker() {
                     colors: colors,
                     time: time
                 });
+                this.history = this.historyManager.getRecent(10);
             }
 
             // アニメーション
@@ -148,11 +156,8 @@ export function colorPicker() {
         clearHistory() {
             if (confirm('お気に入りをすべて削除しますか?')) {
                 this.historyManager.clear();
+                this.history = [];
             }
-        },
-
-        get history() {
-            return this.historyManager.getRecent(10);
         }
     };
 }

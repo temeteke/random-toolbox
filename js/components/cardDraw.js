@@ -4,15 +4,21 @@ import { HistoryManager } from '../utils/HistoryManager.js';
  * カードドローツールのAlpineコンポーネント
  */
 export function cardDraw() {
+    const historyManager = new HistoryManager('cardHistory');
     return {
         cardCount: 5,
         includeJoker: false,
         drawnCards: [],
-        historyManager: new HistoryManager('cardHistory'),
+        historyManager: historyManager,
+        history: [],
         animating: false,
 
         suits: ['♠️', '♥️', '♦️', '♣️'],
         ranks: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'],
+
+        init() {
+            this.history = this.historyManager.getRecent(10);
+        },
 
         draw() {
             const count = parseInt(this.cardCount);
@@ -58,16 +64,14 @@ export function cardDraw() {
                 cards: this.drawnCards.join(', '),
                 time: time
             });
+            this.history = this.historyManager.getRecent(10);
         },
 
         clearHistory() {
             if (confirm('履歴をすべて削除しますか?')) {
                 this.historyManager.clear();
+                this.history = [];
             }
-        },
-
-        get history() {
-            return this.historyManager.getRecent(10);
         },
 
         get displayCards() {

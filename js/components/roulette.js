@@ -4,12 +4,14 @@ import { HistoryManager } from '../utils/HistoryManager.js';
  * ルーレットツールのAlpineコンポーネント
  */
 export function roulette() {
+    const historyManager = new HistoryManager('rouletteHistory');
     return {
         items: '',
         winner: '',
         isSpinning: false,
         wheelRotation: 0,
-        historyManager: new HistoryManager('rouletteHistory'),
+        historyManager: historyManager,
+        history: [],
 
         init() {
             // 保存された項目を復元
@@ -17,6 +19,8 @@ export function roulette() {
             if (savedItems) {
                 this.items = savedItems;
             }
+
+            this.history = this.historyManager.getRecent(10);
         },
 
         spin() {
@@ -67,6 +71,7 @@ export function roulette() {
                     item: winner,
                     time: time
                 });
+                this.history = this.historyManager.getRecent(10);
             }, 4500);
         },
 
@@ -77,11 +82,8 @@ export function roulette() {
         clearHistory() {
             if (confirm('履歴をすべて削除しますか?')) {
                 this.historyManager.clear();
+                this.history = [];
             }
-        },
-
-        get history() {
-            return this.historyManager.getRecent(10);
         },
 
         get itemsList() {
