@@ -1,4 +1,3 @@
-import { HistoryManager } from '../utils/HistoryManager.js';
 
 /**
  * 抽選ボックスツールのAlpineコンポーネント

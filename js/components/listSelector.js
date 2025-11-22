@@ -1,5 +1,3 @@
-import { HistoryManager } from '../utils/HistoryManager.js';
-
 /**
  * リスト選択ツールのAlpineコンポーネント
  */
