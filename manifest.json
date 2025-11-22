@@ -1,6 +1,6 @@
 {
   "name": "Random Toolbox",
-  "short_name": "Random",
+  "short_name": "Random Toolbox",
   "description": "ランダム生成ツールボックス",
   "start_url": "./",
   "display": "standalone",
