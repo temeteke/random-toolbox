@@ -121,7 +121,7 @@ function roulette() {
                 ['#ff9a9e', '#fecfef']
             ];
 
-            let svgContent = '<svg viewBox="0 0 200 200" width="300" height="300"><defs>';
+            let svgContent = '<svg viewBox="0 0 200 200" width="100%" height="100%"><defs>';
 
             // グラデーション定義
             items.forEach((item, index) => {
