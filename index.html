@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="シンプルな乱数生成アプリ">
+    <meta name="theme-color" content="#4CAF50">
+    <title>乱数ジェネレーター</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon-192.png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎲 乱数ジェネレーター</h1>
+            <p class="subtitle">ランダムな数字を生成します</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <div class="input-group">
+                    <label for="min">最小値:</label>
+                    <input type="number" id="min" value="1" class="number-input">
+                </div>
+
+                <div class="input-group">
+                    <label for="max">最大値:</label>
+                    <input type="number" id="max" value="100" class="number-input">
+                </div>
+
+                <button id="generateBtn" class="generate-btn">
+                    乱数を生成
+                </button>
+
+                <div id="result" class="result">
+                    <div class="result-label">生成された数字</div>
+                    <div id="randomNumber" class="random-number">?</div>
+                </div>
+
+                <div class="history-section">
+                    <h3>履歴</h3>
+                    <button id="clearHistoryBtn" class="clear-btn">履歴をクリア</button>
+                    <ul id="historyList" class="history-list"></ul>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p class="install-prompt" id="installPrompt" style="display: none;">
+                📱 このアプリをホーム画面に追加できます
+                <button id="installBtn" class="install-btn">インストール</button>
+            </p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
