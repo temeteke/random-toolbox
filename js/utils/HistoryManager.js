@@ -15,7 +15,16 @@ export class HistoryManager {
     load() {
         try {
             const data = localStorage.getItem(this.storageKey);
-            return data ? JSON.parse(data) : [];
+            if (!data) return [];
+
+            const items = JSON.parse(data);
+            // 既存のアイテムにIDがない場合は追加
+            return items.map((item, index) => {
+                if (!item.id) {
+                    return { ...item, id: Date.now() + '-legacy-' + index };
+                }
+                return item;
+            });
         } catch (error) {
             console.error(`Failed to load history for ${this.storageKey}:`, error);
             return [];
@@ -37,7 +46,11 @@ export class HistoryManager {
      * 履歴に新しいアイテムを追加
      */
     add(item) {
-        this.items.unshift(item);
+        // 一意のIDを生成（タイムスタンプ + ランダム文字列）
+        const uniqueId = Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        const itemWithId = { ...item, id: uniqueId };
+
+        this.items.unshift(itemWithId);
         if (this.items.length > this.maxItems) {
             this.items = this.items.slice(0, this.maxItems);
         }
