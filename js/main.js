@@ -80,3 +80,8 @@ window.tabManager = function() {
         }
     };
 };
+
+// Alpine.jsを起動
+if (window.startAlpine) {
+    window.startAlpine();
+}

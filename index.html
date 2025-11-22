@@ -9,9 +9,6 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon-192.png">
-
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
     <div class="container" x-data="tabManager()">
@@ -538,6 +535,14 @@
         </footer>
     </div>
 
+    <!-- Alpine.jsの自動起動を遅延 -->
+    <script>
+        window.deferLoadingAlpine = callback => {
+            window.startAlpine = callback;
+        };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- main.jsを読み込む -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
