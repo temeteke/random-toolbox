@@ -251,6 +251,38 @@ const clearRouletteHistoryBtn = document.getElementById('clearRouletteHistoryBtn
 let rouletteHistory = JSON.parse(localStorage.getItem('rouletteHistory')) || [];
 let isSpinning = false;
 
+// ルーレットホイールを更新（プレビュー表示用）
+function updateRouletteWheel() {
+    const text = rouletteItemsInput.value.trim();
+
+    if (!text) {
+        // 入力がない場合はクリア
+        const pointer = rouletteWheel.querySelector('.roulette-pointer');
+        rouletteWheel.innerHTML = '';
+        rouletteWheel.appendChild(pointer);
+        return;
+    }
+
+    const items = text.split('\n').filter(item => item.trim() !== '');
+
+    if (items.length < 2) {
+        // 2項目未満の場合はクリア
+        const pointer = rouletteWheel.querySelector('.roulette-pointer');
+        rouletteWheel.innerHTML = '';
+        rouletteWheel.appendChild(pointer);
+        return;
+    }
+
+    // 既存のルーレットホイールをクリア
+    const pointer = rouletteWheel.querySelector('.roulette-pointer');
+    rouletteWheel.innerHTML = '';
+    rouletteWheel.appendChild(pointer);
+
+    // 新しいルーレットホイールを構築
+    const wheelContainer = buildRouletteWheel(items);
+    rouletteWheel.appendChild(wheelContainer);
+}
+
 // ルーレット履歴を表示
 function displayRouletteHistory() {
     rouletteHistoryList.innerHTML = '';
@@ -464,13 +496,9 @@ function spinRoulette() {
     isSpinning = true;
     rouletteResult.style.display = 'none';
 
-    // 既存のルーレットホイールをクリア
-    const pointer = rouletteWheel.querySelector('.roulette-pointer');
-    rouletteWheel.innerHTML = '';
-    rouletteWheel.appendChild(pointer);
-
-    const wheelContainer = buildRouletteWheel(items);
-    rouletteWheel.appendChild(wheelContainer);
+    // ルーレットホイールを更新
+    updateRouletteWheel();
+    const wheelContainer = rouletteWheel.querySelector('.roulette-wheel-svg');
 
     // ランダムに当選者を選択
     const winnerIndex = Math.floor(Math.random() * items.length);
@@ -479,39 +507,36 @@ function spinRoulette() {
     // 回転角度を計算
     const anglePerItem = 360 / items.length;
     const baseRotation = 1800; // 5回転
-    const targetAngle = baseRotation + (360 - (winnerIndex * anglePerItem)); // 上部のポインタに合わせる
+    // ポインターが上部（12時の位置）にあるため、当選項目を上部に合わせる
+    const targetAngle = baseRotation + (360 - (winnerIndex * anglePerItem + anglePerItem / 2));
 
-    // 回転アニメーション
-    let currentRotation = 0;
-    let velocity = 0;
-    const maxVelocity = 30;
-    const acceleration = 1.5;
-    const friction = 0.98;
+    // イージング関数：easeOutCubic（滑らかな減速）
+    function easeOutCubic(t) {
+        return 1 - Math.pow(1 - t, 3);
+    }
 
-    const spinInterval = setInterval(() => {
-        // 加速フェーズ
-        if (currentRotation < baseRotation / 2 && velocity < maxVelocity) {
-            velocity += acceleration;
+    // アニメーション設定
+    const duration = 4000; // 4秒
+    const startTime = performance.now();
+    let animationFrameId = null;
+
+    // requestAnimationFrameを使った時間ベースのアニメーション
+    function animate(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1); // 0〜1の進捗率
+
+        // イージングを適用
+        const eased = easeOutCubic(progress);
+        const currentAngle = targetAngle * eased;
+
+        // 回転を適用
+        wheelContainer.style.transform = `rotate(${currentAngle}deg)`;
+
+        // アニメーション継続判定
+        if (progress < 1) {
+            animationFrameId = requestAnimationFrame(animate);
         } else {
-            velocity *= friction;
-        }
-
-        currentRotation += velocity;
-
-        // イージングを適用した回転
-        let rotation = currentRotation;
-        if (currentRotation >= targetAngle - 180) {
-            // 減速して正確に停止
-            const remaining = targetAngle - currentRotation;
-            rotation = currentRotation + remaining * 0.1;
-            currentRotation = rotation;
-        }
-
-        wheelContainer.style.transform = `rotate(${rotation}deg)`;
-
-        // 停止条件
-        if (currentRotation >= targetAngle - 1 && velocity < 0.5) {
-            clearInterval(spinInterval);
+            // アニメーション完了時の処理
             wheelContainer.style.transform = `rotate(${targetAngle}deg)`;
 
             // 中央の円をアニメーション
@@ -540,7 +565,10 @@ function spinRoulette() {
                 }, 2000);
             }, 500);
         }
-    }, 16); // 約60fps
+    }
+
+    // アニメーション開始
+    animationFrameId = requestAnimationFrame(animate);
 }
 
 // ルーレット履歴をクリア
@@ -564,7 +592,9 @@ if (savedRouletteItems) {
 
 rouletteItemsInput.addEventListener('input', () => {
     localStorage.setItem('savedRouletteItems', rouletteItemsInput.value);
+    updateRouletteWheel(); // リアルタイムでルーレットを更新
 });
 
 // 初期表示
 displayRouletteHistory();
+updateRouletteWheel(); // 保存されている項目がある場合はルーレットを表示
