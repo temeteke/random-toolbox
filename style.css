@@ -76,12 +76,7 @@ h1 {
 }
 
 .tab-content {
-    display: none;
     animation: fadeIn 0.3s ease-in;
-}
-
-.tab-content.active {
-    display: block;
 }
 
 .input-group {

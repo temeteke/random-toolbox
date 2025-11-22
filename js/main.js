@@ -48,10 +48,29 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 // タブ管理用のAlpineコンポーネント
 window.tabManager = function() {
+    console.log('tabManager initialized');
     return {
         activeTab: 'number',
         switchTab(tabName) {
+            console.log('Switching to tab:', tabName);
             this.activeTab = tabName;
         }
     };
 };
+
+// コンポーネントが正しく読み込まれているか確認
+console.log('Components loaded:', {
+    HistoryManager: typeof window.HistoryManager,
+    numberGenerator: typeof window.numberGenerator,
+    listSelector: typeof window.listSelector,
+    roulette: typeof window.roulette,
+    diceRoller: typeof window.diceRoller,
+    cardDraw: typeof window.cardDraw,
+    colorPicker: typeof window.colorPicker,
+    dateRandomizer: typeof window.dateRandomizer,
+    passwordGenerator: typeof window.passwordGenerator,
+    decisionTool: typeof window.decisionTool,
+    shuffler: typeof window.shuffler,
+    lotteryBox: typeof window.lotteryBox,
+    tabManager: typeof window.tabManager
+});
