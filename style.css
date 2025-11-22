@@ -288,95 +288,94 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 300px;
+    min-height: 350px;
 }
 
 .roulette-wheel {
     position: relative;
     width: 300px;
-    min-height: 300px;
-    background: white;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    height: 300px;
+    border-radius: 50%;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    transition: transform 0.1s cubic-bezier(0.33, 1, 0.68, 1);
+    background: #fff;
 }
 
 .roulette-pointer {
     position: absolute;
-    top: -15px;
+    top: -25px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 30px;
+    font-size: 40px;
     color: #667eea;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     z-index: 10;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
 }
 
 .roulette-item {
-    padding: 15px 20px;
-    margin: 8px 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: 600;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    clip-path: polygon(50% 50%, 50% 0%, 100% 0%);
+    transform-origin: center center;
+}
+
+.roulette-item-content {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    width: 80px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    transition: all 0.3s;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    word-wrap: break-word;
+    line-height: 1.2;
 }
 
-.roulette-item:nth-child(2n) {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
+.roulette-item:nth-child(1) { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.roulette-item:nth-child(2) { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.roulette-item:nth-child(3) { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.roulette-item:nth-child(4) { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.roulette-item:nth-child(5) { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.roulette-item:nth-child(6) { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.roulette-item:nth-child(7) { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.roulette-item:nth-child(8) { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
 
-.roulette-item:nth-child(3n) {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-.roulette-item:nth-child(4n) {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-}
-
-.roulette-item:nth-child(5n) {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-}
-
-.roulette-item.winner {
-    transform: scale(1.1);
-    box-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
-    animation: pulse 0.5s ease-in-out;
-}
-
-@keyframes spin {
-    0% {
-        transform: translateY(0);
-    }
-    100% {
-        transform: translateY(var(--spin-distance));
-    }
+.roulette-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
 }
 
 @keyframes pulse {
     0%, 100% {
-        transform: scale(1.1);
+        transform: translate(-50%, -50%) scale(1);
     }
     50% {
-        transform: scale(1.15);
+        transform: translate(-50%, -50%) scale(1.1);
     }
 }
 
-.roulette-items-container {
-    overflow: hidden;
-    height: 260px;
-    position: relative;
-}
-
-.roulette-items {
-    transition: transform 0.1s linear;
-}
-
-.roulette-items.spinning {
-    animation: none;
+.roulette-center.winner {
+    animation: pulse 0.5s ease-in-out infinite;
 }
 
 @media (max-width: 600px) {
