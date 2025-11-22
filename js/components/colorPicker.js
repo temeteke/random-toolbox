@@ -12,7 +12,20 @@ function colorPicker() {
         animating: false,
 
         init() {
+            // URLから状態を復元
+            const savedState = window.urlStateManager.restoreState('color');
+            if (savedState.colorType !== undefined) this.colorType = savedState.colorType;
+
+            // 状態変更を監視してURLに保存
+            this.$watch('colorType', () => this.saveToURL());
+
             this.history = this.historyManager.getRecent(10);
+        },
+
+        saveToURL() {
+            window.urlStateManager.saveState('color', {
+                colorType: this.colorType
+            });
         },
 
         generate() {

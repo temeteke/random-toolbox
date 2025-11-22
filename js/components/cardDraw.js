@@ -15,7 +15,23 @@ function cardDraw() {
         ranks: ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'],
 
         init() {
+            // URLから状態を復元
+            const savedState = window.urlStateManager.restoreState('card');
+            if (savedState.cardCount !== undefined) this.cardCount = savedState.cardCount;
+            if (savedState.includeJoker !== undefined) this.includeJoker = savedState.includeJoker;
+
+            // 状態変更を監視してURLに保存
+            this.$watch('cardCount', () => this.saveToURL());
+            this.$watch('includeJoker', () => this.saveToURL());
+
             this.history = this.historyManager.getRecent(10);
+        },
+
+        saveToURL() {
+            window.urlStateManager.saveState('card', {
+                cardCount: this.cardCount,
+                includeJoker: this.includeJoker
+            });
         },
 
         draw() {

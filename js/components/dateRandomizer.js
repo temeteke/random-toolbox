@@ -21,7 +21,26 @@ function dateRandomizer() {
             this.startDate = this.formatDateForInput(today);
             this.endDate = this.formatDateForInput(oneYearLater);
 
+            // URLから状態を復元
+            const savedState = window.urlStateManager.restoreState('date');
+            if (savedState.startDate !== undefined) this.startDate = savedState.startDate;
+            if (savedState.endDate !== undefined) this.endDate = savedState.endDate;
+            if (savedState.selectedDays !== undefined) this.selectedDays = savedState.selectedDays;
+
+            // 状態変更を監視してURLに保存
+            this.$watch('startDate', () => this.saveToURL());
+            this.$watch('endDate', () => this.saveToURL());
+            this.$watch('selectedDays', () => this.saveToURL());
+
             this.history = this.historyManager.getRecent(10);
+        },
+
+        saveToURL() {
+            window.urlStateManager.saveState('date', {
+                startDate: this.startDate,
+                endDate: this.endDate,
+                selectedDays: this.selectedDays
+            });
         },
 
         formatDateForInput(date) {
