@@ -238,3 +238,181 @@ if (savedListItems) {
 listItemsInput.addEventListener('input', () => {
     localStorage.setItem('savedListItems', listItemsInput.value);
 });
+
+// ルーレット機能
+const rouletteItemsInput = document.getElementById('rouletteItems');
+const spinBtn = document.getElementById('spinBtn');
+const rouletteWheel = document.getElementById('rouletteWheel');
+const rouletteResult = document.getElementById('rouletteResult');
+const rouletteWinner = document.getElementById('rouletteWinner');
+const rouletteHistoryList = document.getElementById('rouletteHistoryList');
+const clearRouletteHistoryBtn = document.getElementById('clearRouletteHistoryBtn');
+
+let rouletteHistory = JSON.parse(localStorage.getItem('rouletteHistory')) || [];
+let isSpinning = false;
+
+// ルーレット履歴を表示
+function displayRouletteHistory() {
+    rouletteHistoryList.innerHTML = '';
+    rouletteHistory.slice(0, 10).forEach((item) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <span class="number">${item.item}</span>
+            <span class="time">${item.time}</span>
+        `;
+        rouletteHistoryList.appendChild(li);
+    });
+}
+
+// ルーレット履歴を保存
+function saveRouletteHistory(item) {
+    const now = new Date();
+    const time = now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+
+    rouletteHistory.unshift({
+        item: item,
+        time: time
+    });
+
+    if (rouletteHistory.length > 50) {
+        rouletteHistory = rouletteHistory.slice(0, 50);
+    }
+
+    localStorage.setItem('rouletteHistory', JSON.stringify(rouletteHistory));
+    displayRouletteHistory();
+}
+
+// ルーレットホイールを構築
+function buildRouletteWheel(items) {
+    const container = document.createElement('div');
+    container.className = 'roulette-items-container';
+
+    const itemsWrapper = document.createElement('div');
+    itemsWrapper.className = 'roulette-items';
+
+    // アイテムを3回繰り返して、スムーズな回転を実現
+    for (let i = 0; i < 3; i++) {
+        items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'roulette-item';
+            div.textContent = item;
+            itemsWrapper.appendChild(div);
+        });
+    }
+
+    container.appendChild(itemsWrapper);
+    return { container, itemsWrapper };
+}
+
+// ルーレットを回す
+function spinRoulette() {
+    if (isSpinning) return;
+
+    const text = rouletteItemsInput.value.trim();
+
+    if (!text) {
+        alert('ルーレット項目を入力してください');
+        return;
+    }
+
+    const items = text.split('\n').filter(item => item.trim() !== '');
+
+    if (items.length === 0) {
+        alert('有効な項目を入力してください');
+        return;
+    }
+
+    if (items.length < 2) {
+        alert('最低2つの項目を入力してください');
+        return;
+    }
+
+    isSpinning = true;
+    rouletteResult.style.display = 'none';
+
+    // 既存のルーレットホイールをクリア
+    const pointer = rouletteWheel.querySelector('.roulette-pointer');
+    rouletteWheel.innerHTML = '';
+    rouletteWheel.appendChild(pointer);
+
+    const { container, itemsWrapper } = buildRouletteWheel(items);
+    rouletteWheel.appendChild(container);
+
+    // ランダムに当選者を選択
+    const winnerIndex = Math.floor(Math.random() * items.length);
+    const winner = items[winnerIndex];
+
+    // アニメーション設定
+    const itemHeight = 63; // padding + margin + font-size
+    const totalItems = items.length * 3;
+    const targetPosition = items.length + winnerIndex;
+
+    // スピン開始
+    let currentPosition = 0;
+    let speed = 10;
+    const maxSpeed = 50;
+    const acceleration = 2;
+    const deceleration = 0.5;
+
+    const spinInterval = setInterval(() => {
+        // 加速フェーズ
+        if (currentPosition < itemHeight * items.length && speed < maxSpeed) {
+            speed += acceleration;
+        }
+        // 減速フェーズ
+        else if (currentPosition > itemHeight * (targetPosition - 3)) {
+            speed = Math.max(1, speed - deceleration);
+        }
+
+        currentPosition += speed;
+        itemsWrapper.style.transform = `translateY(-${currentPosition}px)`;
+
+        // 停止条件
+        if (currentPosition >= itemHeight * targetPosition && speed <= 2) {
+            clearInterval(spinInterval);
+
+            // 当選アイテムをハイライト
+            const allItems = itemsWrapper.querySelectorAll('.roulette-item');
+            allItems[targetPosition].classList.add('winner');
+
+            // 結果を表示
+            setTimeout(() => {
+                rouletteWinner.textContent = winner;
+                rouletteResult.style.display = 'block';
+                rouletteWinner.style.animation = 'none';
+                setTimeout(() => {
+                    rouletteWinner.style.animation = 'fadeIn 0.5s ease-in';
+                }, 10);
+
+                saveRouletteHistory(winner);
+                isSpinning = false;
+            }, 500);
+        }
+    }, 16); // 約60fps
+}
+
+// ルーレット履歴をクリア
+function clearRouletteHistory() {
+    if (confirm('履歴をすべて削除しますか?')) {
+        rouletteHistory = [];
+        localStorage.removeItem('rouletteHistory');
+        displayRouletteHistory();
+    }
+}
+
+// ルーレットのイベントリスナー
+spinBtn.addEventListener('click', spinRoulette);
+clearRouletteHistoryBtn.addEventListener('click', clearRouletteHistory);
+
+// ルーレットアイテムの保存と復元
+const savedRouletteItems = localStorage.getItem('savedRouletteItems');
+if (savedRouletteItems) {
+    rouletteItemsInput.value = savedRouletteItems;
+}
+
+rouletteItemsInput.addEventListener('input', () => {
+    localStorage.setItem('savedRouletteItems', rouletteItemsInput.value);
+});
+
+// 初期表示
+displayRouletteHistory();
