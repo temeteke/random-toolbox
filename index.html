@@ -87,7 +87,7 @@
                             <template x-for="item in history" :key="item.time">
                                 <li>
                                     <span class="number" x-text="item.number"></span>
-                                    <span class="time" x-text="`${item.range} - ${item.time}`"></span>
+                                    <span class="time" x-text="item.range + ' - ' + item.time"></span>
                                 </li>
                             </template>
                         </ul>
@@ -197,7 +197,7 @@
                             <template x-for="item in history" :key="item.time">
                                 <li>
                                     <span class="number" x-text="item.result"></span>
-                                    <span class="time" x-text="`${item.config} - ${item.time}`"></span>
+                                    <span class="time" x-text="item.config + ' - ' + item.time"></span>
                                 </li>
                             </template>
                         </ul>
@@ -395,7 +395,7 @@
                             <template x-for="item in history" :key="item.time">
                                 <li>
                                     <span class="number" x-text="item.password"></span>
-                                    <span class="time" x-text="`${item.config} - ${item.time}`"></span>
+                                    <span class="time" x-text="item.config + ' - ' + item.time"></span>
                                 </li>
                             </template>
                         </ul>
@@ -425,7 +425,7 @@
                             <template x-for="item in history" :key="item.time">
                                 <li>
                                     <span class="number" x-text="item.decision"></span>
-                                    <span class="time" x-text="`(${item.options}) - ${item.time}`"></span>
+                                    <span class="time" x-text="'(' + item.options + ') - ' + item.time"></span>
                                 </li>
                             </template>
                         </ul>
@@ -462,7 +462,7 @@
                                 <div>
                                     <template x-for="(group, index) in shuffledResult.groups" :key="index">
                                         <div class="group">
-                                            <h4 x-text="`グループ ${index + 1}`"></h4>
+                                            <h4 x-text="'グループ ' + (index + 1)"></h4>
                                             <ul>
                                                 <template x-for="item in group" :key="item">
                                                     <li x-text="item"></li>
@@ -482,7 +482,7 @@
                             <template x-for="item in history" :key="item.time">
                                 <li>
                                     <span class="number" x-text="item.result"></span>
-                                    <span class="time" x-text="`${item.config} - ${item.time}`"></span>
+                                    <span class="time" x-text="item.config + ' - ' + item.time"></span>
                                 </li>
                             </template>
                         </ul>
@@ -511,7 +511,7 @@
                     <div class="result" x-show="currentWinner" x-transition>
                         <div class="result-label">当選!</div>
                         <div class="random-number" :class="{ 'fade-in': animating }" x-text="currentWinner"></div>
-                        <div class="lottery-remaining" x-text="`残り: ${remaining}項目`"></div>
+                        <div class="lottery-remaining" x-text="'残り: ' + remaining + '項目'"></div>
                     </div>
 
                     <div class="history-section">
@@ -521,7 +521,7 @@
                             <template x-for="item in history" :key="item.time">
                                 <li>
                                     <span class="number" x-text="item.winner"></span>
-                                    <span class="time" x-text="`${item.order} - ${item.time}`"></span>
+                                    <span class="time" x-text="item.order + ' - ' + item.time"></span>
                                 </li>
                             </template>
                         </ul>
