@@ -27,6 +27,9 @@
                     <button class="tab-btn" data-tab="list">
                         📋 リスト
                     </button>
+                    <button class="tab-btn" data-tab="roulette">
+                        🎰 ルーレット
+                    </button>
                 </div>
 
                 <!-- 数字生成タブ -->
@@ -77,6 +80,35 @@
                         <h3>履歴</h3>
                         <button id="clearListHistoryBtn" class="clear-btn">履歴をクリア</button>
                         <ul id="listHistoryList" class="history-list"></ul>
+                    </div>
+                </div>
+
+                <!-- ルーレットタブ -->
+                <div id="rouletteTab" class="tab-content">
+                    <div class="input-group">
+                        <label for="rouletteItems">ルーレット項目（1行に1つ）:</label>
+                        <textarea id="rouletteItems" class="list-input" rows="8" placeholder="選択肢1&#10;選択肢2&#10;選択肢3&#10;選択肢4&#10;選択肢5"></textarea>
+                    </div>
+
+                    <button id="spinBtn" class="generate-btn">
+                        🎰 ルーレットを回す
+                    </button>
+
+                    <div class="roulette-container">
+                        <div class="roulette-wheel" id="rouletteWheel">
+                            <div class="roulette-pointer">▼</div>
+                        </div>
+                    </div>
+
+                    <div id="rouletteResult" class="result" style="display: none;">
+                        <div class="result-label">当たり!</div>
+                        <div id="rouletteWinner" class="random-number">?</div>
+                    </div>
+
+                    <div class="history-section">
+                        <h3>履歴</h3>
+                        <button id="clearRouletteHistoryBtn" class="clear-btn">履歴をクリア</button>
+                        <ul id="rouletteHistoryList" class="history-list"></ul>
                     </div>
                 </div>
             </div>

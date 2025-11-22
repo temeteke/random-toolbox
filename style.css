@@ -282,6 +282,103 @@ footer {
     background: #45a049;
 }
 
+/* ルーレットスタイル */
+.roulette-container {
+    margin: 30px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+.roulette-wheel {
+    position: relative;
+    width: 300px;
+    min-height: 300px;
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.roulette-pointer {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 30px;
+    color: #667eea;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.roulette-item {
+    padding: 15px 20px;
+    margin: 8px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: all 0.3s;
+}
+
+.roulette-item:nth-child(2n) {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.roulette-item:nth-child(3n) {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.roulette-item:nth-child(4n) {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.roulette-item:nth-child(5n) {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.roulette-item.winner {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
+    animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes spin {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(var(--spin-distance));
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1.1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+.roulette-items-container {
+    overflow: hidden;
+    height: 260px;
+    position: relative;
+}
+
+.roulette-items {
+    transition: transform 0.1s linear;
+}
+
+.roulette-items.spinning {
+    animation: none;
+}
+
 @media (max-width: 600px) {
     h1 {
         font-size: 2em;
@@ -293,5 +390,15 @@ footer {
 
     .random-number {
         font-size: 3em;
+    }
+
+    .roulette-wheel {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .roulette-item {
+        font-size: 16px;
+        padding: 12px 15px;
     }
 }
