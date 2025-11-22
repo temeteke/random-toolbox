@@ -51,6 +51,20 @@ window.tabManager = function() {
     console.log('tabManager initialized');
     return {
         activeTab: 'number',
+
+        init() {
+            // URLから初期タブを復元
+            const urlTab = window.urlStateManager.getParam('tab');
+            if (urlTab) {
+                this.activeTab = urlTab;
+            }
+
+            // タブ変更を監視してURLに保存
+            this.$watch('activeTab', (value) => {
+                window.urlStateManager.setParam('tab', value);
+            });
+        },
+
         switchTab(tabName) {
             console.log('Switching to tab:', tabName);
             this.activeTab = tabName;

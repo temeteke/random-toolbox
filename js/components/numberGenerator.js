@@ -12,8 +12,24 @@ function numberGenerator() {
         animating: false,
 
         init() {
+            // URLから状態を復元
+            const savedState = window.urlStateManager.restoreState('number');
+            if (savedState.min !== undefined) this.min = savedState.min;
+            if (savedState.max !== undefined) this.max = savedState.max;
+
+            // 状態変更を監視してURLに保存
+            this.$watch('min', () => this.saveToURL());
+            this.$watch('max', () => this.saveToURL());
+
             // 初期化時に履歴を読み込む
             this.history = this.historyManager.getRecent(10);
+        },
+
+        saveToURL() {
+            window.urlStateManager.saveState('number', {
+                min: this.min,
+                max: this.max
+            });
         },
 
         generate() {

@@ -12,13 +12,31 @@ function shuffler() {
         animating: false,
 
         init() {
-            // 保存された項目を復元
-            const savedItems = localStorage.getItem('savedShuffleItems');
-            if (savedItems) {
-                this.items = savedItems;
+            // URLから状態を復元（優先）
+            const savedState = window.urlStateManager.restoreState('shuffle');
+            if (savedState.items !== undefined) {
+                this.items = savedState.items;
+            } else {
+                // 保存された項目を復元
+                const savedItems = localStorage.getItem('savedShuffleItems');
+                if (savedItems) {
+                    this.items = savedItems;
+                }
             }
+            if (savedState.groupCount !== undefined) this.groupCount = savedState.groupCount;
+
+            // 状態変更を監視してURLに保存
+            this.$watch('items', () => this.saveToURL());
+            this.$watch('groupCount', () => this.saveToURL());
 
             this.history = this.historyManager.getRecent(10);
+        },
+
+        saveToURL() {
+            window.urlStateManager.saveState('shuffle', {
+                items: this.items,
+                groupCount: this.groupCount
+            });
         },
 
         shuffle() {

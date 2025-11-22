@@ -11,13 +11,28 @@ function decisionTool() {
         animating: false,
 
         init() {
-            // 保存された選択肢を復元
-            const savedOptions = localStorage.getItem('savedDecisionOptions');
-            if (savedOptions) {
-                this.options = savedOptions;
+            // URLから状態を復元（優先）
+            const savedState = window.urlStateManager.restoreState('decision');
+            if (savedState.options !== undefined) {
+                this.options = savedState.options;
+            } else {
+                // 保存された選択肢を復元
+                const savedOptions = localStorage.getItem('savedDecisionOptions');
+                if (savedOptions) {
+                    this.options = savedOptions;
+                }
             }
 
+            // 状態変更を監視してURLに保存
+            this.$watch('options', () => this.saveToURL());
+
             this.history = this.historyManager.getRecent(10);
+        },
+
+        saveToURL() {
+            window.urlStateManager.saveState('decision', {
+                options: this.options
+            });
         },
 
         makeDecision() {

@@ -13,7 +13,23 @@ function diceRoller() {
         animating: false,
 
         init() {
+            // URLから状態を復元
+            const savedState = window.urlStateManager.restoreState('dice');
+            if (savedState.count !== undefined) this.count = savedState.count;
+            if (savedState.sides !== undefined) this.sides = savedState.sides;
+
+            // 状態変更を監視してURLに保存
+            this.$watch('count', () => this.saveToURL());
+            this.$watch('sides', () => this.saveToURL());
+
             this.history = this.historyManager.getRecent(10);
+        },
+
+        saveToURL() {
+            window.urlStateManager.saveState('dice', {
+                count: this.count,
+                sides: this.sides
+            });
         },
 
         roll() {

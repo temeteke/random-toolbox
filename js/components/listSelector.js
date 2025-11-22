@@ -11,18 +11,31 @@ function listSelector() {
         animating: false,
 
         init() {
-            // LocalStorageから保存済みリストを復元
-            const savedListItems = localStorage.getItem('savedListItems');
-            if (savedListItems) {
-                this.listItems = savedListItems;
+            // URLから状態を復元（優先）
+            const savedState = window.urlStateManager.restoreState('list');
+            if (savedState.items !== undefined) {
+                this.listItems = savedState.items;
+            } else {
+                // LocalStorageから保存済みリストを復元
+                const savedListItems = localStorage.getItem('savedListItems');
+                if (savedListItems) {
+                    this.listItems = savedListItems;
+                }
             }
 
-            // リスト変更時に自動保存
+            // リスト変更時に自動保存（LocalStorageとURL）
             this.$watch('listItems', (value) => {
                 localStorage.setItem('savedListItems', value);
+                this.saveToURL();
             });
 
             this.history = this.historyManager.getRecent(10);
+        },
+
+        saveToURL() {
+            window.urlStateManager.saveState('list', {
+                items: this.listItems
+            });
         },
 
         select() {

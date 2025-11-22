@@ -16,7 +16,32 @@ function passwordGenerator() {
         animating: false,
 
         init() {
+            // URLから状態を復元
+            const savedState = window.urlStateManager.restoreState('password');
+            if (savedState.length !== undefined) this.length = savedState.length;
+            if (savedState.includeUppercase !== undefined) this.includeUppercase = savedState.includeUppercase;
+            if (savedState.includeLowercase !== undefined) this.includeLowercase = savedState.includeLowercase;
+            if (savedState.includeNumbers !== undefined) this.includeNumbers = savedState.includeNumbers;
+            if (savedState.includeSymbols !== undefined) this.includeSymbols = savedState.includeSymbols;
+
+            // 状態変更を監視してURLに保存
+            this.$watch('length', () => this.saveToURL());
+            this.$watch('includeUppercase', () => this.saveToURL());
+            this.$watch('includeLowercase', () => this.saveToURL());
+            this.$watch('includeNumbers', () => this.saveToURL());
+            this.$watch('includeSymbols', () => this.saveToURL());
+
             this.history = this.historyManager.getRecent(10);
+        },
+
+        saveToURL() {
+            window.urlStateManager.saveState('password', {
+                length: this.length,
+                includeUppercase: this.includeUppercase,
+                includeLowercase: this.includeLowercase,
+                includeNumbers: this.includeNumbers,
+                includeSymbols: this.includeSymbols
+            });
         },
 
         generate() {

@@ -12,13 +12,28 @@ function roulette() {
         history: [],
 
         init() {
-            // 保存された項目を復元
-            const savedItems = localStorage.getItem('savedRouletteItems');
-            if (savedItems) {
-                this.items = savedItems;
+            // URLから状態を復元（優先）
+            const savedState = window.urlStateManager.restoreState('roulette');
+            if (savedState.items !== undefined) {
+                this.items = savedState.items;
+            } else {
+                // 保存された項目を復元
+                const savedItems = localStorage.getItem('savedRouletteItems');
+                if (savedItems) {
+                    this.items = savedItems;
+                }
             }
 
+            // 状態変更を監視してURLに保存
+            this.$watch('items', () => this.saveToURL());
+
             this.history = this.historyManager.getRecent(10);
+        },
+
+        saveToURL() {
+            window.urlStateManager.saveState('roulette', {
+                items: this.items
+            });
         },
 
         spin() {
