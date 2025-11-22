@@ -3,7 +3,7 @@ import { HistoryManager } from '../utils/HistoryManager.js';
 /**
  * パスワード生成器のAlpineコンポーネント
  */
-export function passwordGenerator() {
+function passwordGenerator() {
     const historyManager = new HistoryManager('passwordHistory');
     return {
         length: 16,
@@ -125,3 +125,5 @@ export function passwordGenerator() {
         }
     };
 }
+
+window.passwordGenerator = passwordGenerator;

@@ -3,7 +3,7 @@ import { HistoryManager } from '../utils/HistoryManager.js';
 /**
  * カラーピッカーツールのAlpineコンポーネント
  */
-export function colorPicker() {
+function colorPicker() {
     const historyManager = new HistoryManager('colorHistory');
     return {
         colorType: 'single',
@@ -161,3 +161,5 @@ export function colorPicker() {
         }
     };
 }
+
+window.colorPicker = colorPicker;

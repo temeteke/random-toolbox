@@ -3,7 +3,7 @@ import { HistoryManager } from '../utils/HistoryManager.js';
 /**
  * 数字生成ツールのAlpineコンポーネント
  */
-export function numberGenerator() {
+function numberGenerator() {
     const historyManager = new HistoryManager('randomHistory');
     return {
         min: 1,
@@ -62,3 +62,6 @@ export function numberGenerator() {
         }
     };
 }
+
+// グローバルに登録
+window.numberGenerator = numberGenerator;

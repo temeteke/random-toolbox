@@ -3,7 +3,7 @@ import { HistoryManager } from '../utils/HistoryManager.js';
 /**
  * リスト選択ツールのAlpineコンポーネント
  */
-export function listSelector() {
+function listSelector() {
     const historyManager = new HistoryManager('listHistory');
     return {
         listItems: '',
@@ -70,3 +70,5 @@ export function listSelector() {
         }
     };
 }
+
+window.listSelector = listSelector;

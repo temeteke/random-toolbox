@@ -3,7 +3,7 @@ import { HistoryManager } from '../utils/HistoryManager.js';
 /**
  * シャッフラーツールのAlpineコンポーネント
  */
-export function shuffler() {
+function shuffler() {
     const historyManager = new HistoryManager('shuffleHistory');
     return {
         items: '',
@@ -114,3 +114,5 @@ export function shuffler() {
         }
     };
 }
+
+window.shuffler = shuffler;

@@ -3,18 +3,6 @@
  * Alpine.jsを使用したリファクタリング版
  */
 
-import { numberGenerator } from './components/numberGenerator.js';
-import { listSelector } from './components/listSelector.js';
-import { roulette } from './components/roulette.js';
-import { diceRoller } from './components/diceRoller.js';
-import { cardDraw } from './components/cardDraw.js';
-import { colorPicker } from './components/colorPicker.js';
-import { dateRandomizer } from './components/dateRandomizer.js';
-import { passwordGenerator } from './components/passwordGenerator.js';
-import { decisionTool } from './components/decisionTool.js';
-import { shuffler } from './components/shuffler.js';
-import { lotteryBox } from './components/lotteryBox.js';
-
 // PWA: Service Worker登録
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -58,19 +46,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
     }
 });
 
-// Alpine.jsコンポーネントをグローバルに登録
-window.numberGenerator = numberGenerator;
-window.listSelector = listSelector;
-window.roulette = roulette;
-window.diceRoller = diceRoller;
-window.cardDraw = cardDraw;
-window.colorPicker = colorPicker;
-window.dateRandomizer = dateRandomizer;
-window.passwordGenerator = passwordGenerator;
-window.decisionTool = decisionTool;
-window.shuffler = shuffler;
-window.lotteryBox = lotteryBox;
-
 // タブ管理用のAlpineコンポーネント
 window.tabManager = function() {
     return {
@@ -80,6 +55,3 @@ window.tabManager = function() {
         }
     };
 };
-
-// すべてのコンポーネントが登録されたことを通知
-document.dispatchEvent(new CustomEvent('alpine:components-loaded'));

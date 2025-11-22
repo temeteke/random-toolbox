@@ -3,7 +3,7 @@ import { HistoryManager } from '../utils/HistoryManager.js';
 /**
  * サイコロツールのAlpineコンポーネント
  */
-export function diceRoller() {
+function diceRoller() {
     const historyManager = new HistoryManager('diceHistory');
     return {
         count: 1,
@@ -63,3 +63,5 @@ export function diceRoller() {
         }
     };
 }
+
+window.diceRoller = diceRoller;

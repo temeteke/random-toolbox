@@ -535,18 +535,22 @@
         </footer>
     </div>
 
-    <!-- Alpine.jsの自動起動を遅延 -->
-    <script>
-        window.deferLoadingAlpine = callback => {
-            // main.jsの読み込み完了を待つ
-            document.addEventListener('alpine:components-loaded', () => {
-                callback();
-            });
-        };
-    </script>
-    <!-- Alpine.jsを読み込む（自動起動を遅延） -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <!-- main.jsを読み込んで関数を登録 -->
+    <!-- 1. 先にコンポーネント関数を登録 -->
+    <script type="module" src="js/utils/HistoryManager.js"></script>
+    <script type="module" src="js/components/numberGenerator.js"></script>
+    <script type="module" src="js/components/listSelector.js"></script>
+    <script type="module" src="js/components/roulette.js"></script>
+    <script type="module" src="js/components/diceRoller.js"></script>
+    <script type="module" src="js/components/cardDraw.js"></script>
+    <script type="module" src="js/components/colorPicker.js"></script>
+    <script type="module" src="js/components/dateRandomizer.js"></script>
+    <script type="module" src="js/components/passwordGenerator.js"></script>
+    <script type="module" src="js/components/decisionTool.js"></script>
+    <script type="module" src="js/components/shuffler.js"></script>
+    <script type="module" src="js/components/lotteryBox.js"></script>
     <script type="module" src="js/main.js"></script>
+
+    <!-- 2. 最後にAlpine.jsを読み込んで初期化 -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>
