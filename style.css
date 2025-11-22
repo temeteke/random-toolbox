@@ -315,7 +315,7 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.1s cubic-bezier(0.33, 1, 0.68, 1);
+    /* transition削除: JavaScriptアニメーションとの競合を避けるため */
 }
 
 .roulette-wheel-svg svg {
