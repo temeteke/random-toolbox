@@ -81,7 +81,7 @@
                         <h3>履歴</h3>
                         <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
                         <ul class="history-list">
-                            <template x-for="item in history" :key="item.time">
+                            <template x-for="item in history" :key="item.id">
                                 <li>
                                     <span class="number" x-text="item.number"></span>
                                     <span class="time" x-text="item.range + ' - ' + item.time"></span>
@@ -111,7 +111,7 @@
                         <h3>履歴</h3>
                         <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
                         <ul class="history-list">
-                            <template x-for="item in history" :key="item.time">
+                            <template x-for="item in history" :key="item.id">
                                 <li>
                                     <span class="number" x-text="item.item"></span>
                                     <span class="time" x-text="item.time"></span>
@@ -148,7 +148,7 @@
                         <h3>履歴</h3>
                         <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
                         <ul class="history-list">
-                            <template x-for="item in history" :key="item.time">
+                            <template x-for="item in history" :key="item.id">
                                 <li>
                                     <span class="number" x-text="item.item"></span>
                                     <span class="time" x-text="item.time"></span>
@@ -191,7 +191,7 @@
                         <h3>履歴</h3>
                         <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
                         <ul class="history-list">
-                            <template x-for="item in history" :key="item.time">
+                            <template x-for="item in history" :key="item.id">
                                 <li>
                                     <span class="number" x-text="item.result"></span>
                                     <span class="time" x-text="item.config + ' - ' + item.time"></span>
@@ -228,7 +228,7 @@
                         <h3>履歴</h3>
                         <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
                         <ul class="history-list">
-                            <template x-for="item in history" :key="item.time">
+                            <template x-for="item in history" :key="item.id">
                                 <li>
                                     <span class="number" x-text="item.cards"></span>
                                     <span class="time" x-text="item.time"></span>
@@ -281,7 +281,7 @@
                         <h3>お気に入り</h3>
                         <button @click="clearHistory()" class="clear-btn">クリア</button>
                         <ul class="history-list color-history">
-                            <template x-for="item in history" :key="item.time">
+                            <template x-for="item in history" :key="item.id">
                                 <li>
                                     <template x-if="item.type === 'single'">
                                         <div>
@@ -342,7 +342,7 @@
                         <h3>履歴</h3>
                         <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
                         <ul class="history-list">
-                            <template x-for="item in history" :key="item.time">
+                            <template x-for="item in history" :key="item.id">
                                 <li>
                                     <span class="number" x-text="item.date"></span>
                                     <span class="time" x-text="item.time"></span>
@@ -389,7 +389,7 @@
                         <h3>履歴</h3>
                         <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
                         <ul class="history-list">
-                            <template x-for="item in history" :key="item.time">
+                            <template x-for="item in history" :key="item.id">
                                 <li>
                                     <span class="number" x-text="item.password"></span>
                                     <span class="time" x-text="item.config + ' - ' + item.time"></span>
@@ -419,7 +419,7 @@
                         <h3>履歴</h3>
                         <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
                         <ul class="history-list">
-                            <template x-for="item in history" :key="item.time">
+                            <template x-for="item in history" :key="item.id">
                                 <li>
                                     <span class="number" x-text="item.decision"></span>
                                     <span class="time" x-text="'(' + item.options + ') - ' + item.time"></span>
@@ -476,7 +476,7 @@
                         <h3>履歴</h3>
                         <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
                         <ul class="history-list">
-                            <template x-for="item in history" :key="item.time">
+                            <template x-for="item in history" :key="item.id">
                                 <li>
                                     <span class="number" x-text="item.result"></span>
                                     <span class="time" x-text="item.config + ' - ' + item.time"></span>
@@ -515,7 +515,7 @@
                         <h3>抽選結果</h3>
                         <button @click="clearHistory()" class="clear-btn">クリア</button>
                         <ul class="history-list">
-                            <template x-for="item in history" :key="item.time">
+                            <template x-for="item in history" :key="item.id">
                                 <li>
                                     <span class="number" x-text="item.winner"></span>
                                     <span class="time" x-text="item.order + ' - ' + item.time"></span>
