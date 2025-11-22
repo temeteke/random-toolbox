@@ -336,6 +336,45 @@ footer {
     animation: pulse 0.5s ease-in-out infinite;
 }
 
+/* タブレット以上 */
+@media (min-width: 600px) {
+    .container {
+        max-width: 700px;
+    }
+}
+
+/* デスクトップ */
+@media (min-width: 900px) {
+    .container {
+        max-width: 900px;
+    }
+
+    .card {
+        padding: 50px;
+    }
+
+    .roulette-wheel {
+        width: 350px;
+        height: 350px;
+    }
+}
+
+/* 大画面 */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1000px;
+    }
+
+    .card {
+        padding: 60px;
+    }
+
+    h1 {
+        font-size: 3em;
+    }
+}
+
+/* モバイル */
 @media (max-width: 600px) {
     h1 {
         font-size: 2em;
