@@ -251,6 +251,38 @@ const clearRouletteHistoryBtn = document.getElementById('clearRouletteHistoryBtn
 let rouletteHistory = JSON.parse(localStorage.getItem('rouletteHistory')) || [];
 let isSpinning = false;
 
+// ルーレットホイールを更新（プレビュー表示用）
+function updateRouletteWheel() {
+    const text = rouletteItemsInput.value.trim();
+
+    if (!text) {
+        // 入力がない場合はクリア
+        const pointer = rouletteWheel.querySelector('.roulette-pointer');
+        rouletteWheel.innerHTML = '';
+        rouletteWheel.appendChild(pointer);
+        return;
+    }
+
+    const items = text.split('\n').filter(item => item.trim() !== '');
+
+    if (items.length < 2) {
+        // 2項目未満の場合はクリア
+        const pointer = rouletteWheel.querySelector('.roulette-pointer');
+        rouletteWheel.innerHTML = '';
+        rouletteWheel.appendChild(pointer);
+        return;
+    }
+
+    // 既存のルーレットホイールをクリア
+    const pointer = rouletteWheel.querySelector('.roulette-pointer');
+    rouletteWheel.innerHTML = '';
+    rouletteWheel.appendChild(pointer);
+
+    // 新しいルーレットホイールを構築
+    const wheelContainer = buildRouletteWheel(items);
+    rouletteWheel.appendChild(wheelContainer);
+}
+
 // ルーレット履歴を表示
 function displayRouletteHistory() {
     rouletteHistoryList.innerHTML = '';
@@ -464,13 +496,9 @@ function spinRoulette() {
     isSpinning = true;
     rouletteResult.style.display = 'none';
 
-    // 既存のルーレットホイールをクリア
-    const pointer = rouletteWheel.querySelector('.roulette-pointer');
-    rouletteWheel.innerHTML = '';
-    rouletteWheel.appendChild(pointer);
-
-    const wheelContainer = buildRouletteWheel(items);
-    rouletteWheel.appendChild(wheelContainer);
+    // ルーレットホイールを更新
+    updateRouletteWheel();
+    const wheelContainer = rouletteWheel.querySelector('.roulette-wheel-svg');
 
     // ランダムに当選者を選択
     const winnerIndex = Math.floor(Math.random() * items.length);
@@ -564,7 +592,9 @@ if (savedRouletteItems) {
 
 rouletteItemsInput.addEventListener('input', () => {
     localStorage.setItem('savedRouletteItems', rouletteItemsInput.value);
+    updateRouletteWheel(); // リアルタイムでルーレットを更新
 });
 
 // 初期表示
 displayRouletteHistory();
+updateRouletteWheel(); // 保存されている項目がある場合はルーレットを表示
