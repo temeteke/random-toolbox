@@ -21,11 +21,17 @@ body {
 }
 
 header {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 15px;
     color: white;
-    padding-left: 70px; /* ハンバーガーメニューボタンのスペースを確保 */
-    padding-right: 70px; /* 設定ボタンのスペースを確保 */
+    position: relative;
+}
+
+.header-content {
+    flex: 1;
+    text-align: center;
 }
 
 h1 {
@@ -48,33 +54,30 @@ h1 {
 
 /* ハンバーガーメニューボタン */
 .menu-toggle {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    width: 50px;
-    height: 50px;
-    background: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 24px;
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    font-size: 22px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    transition: transform 0.2s, background 0.3s;
-    z-index: 1001;
-}
-
-[data-theme="dark"] .menu-toggle {
-    background: var(--card-bg);
-    color: var(--text-primary);
+    color: white;
+    transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .menu-toggle:hover {
-    transform: scale(1.1);
-    background: #f0f0f0;
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+[data-theme="dark"] .menu-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 [data-theme="dark"] .menu-toggle:hover {
-    background: var(--border-color);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 /* メニューオーバーレイ */
@@ -863,6 +866,23 @@ select.number-input {
 
     header {
         margin-bottom: 10px;
+        gap: 8px;
+    }
+
+    .menu-toggle,
+    .settings-toggle {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .header-content h1 {
+        font-size: 1.5em;
+        margin-bottom: 3px;
+    }
+
+    .header-content .subtitle {
+        font-size: 0.9em;
     }
 
     h1 {
@@ -876,6 +896,13 @@ select.number-input {
 
     .random-number {
         font-size: 3em;
+    }
+
+    .settings-panel {
+        top: 60px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
     }
 
     .roulette-wheel {
@@ -975,7 +1002,7 @@ select.number-input {
 /* 設定パネル */
 .settings-panel {
     position: fixed;
-    top: 20px;
+    top: 80px;
     right: 20px;
     background: white;
     border-radius: 15px;
@@ -991,27 +1018,30 @@ select.number-input {
 }
 
 .settings-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    background: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 24px;
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    font-size: 22px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    transition: transform 0.2s;
-    z-index: 999;
-}
-
-[data-theme="dark"] .settings-toggle {
-    background: var(--card-bg);
+    color: white;
+    transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .settings-toggle:hover {
-    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+[data-theme="dark"] .settings-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .settings-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .settings-section {
