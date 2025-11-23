@@ -41,7 +41,7 @@ h1 {
 .card {
     background: white;
     border-radius: 20px;
-    padding: 20px;
+    padding: 25px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
 
@@ -56,9 +56,9 @@ h1 {
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     z-index: 1002;
-    display: flex;
+    display: grid;
+    grid-template-columns: 80px 1fr 80px;
     align-items: center;
-    justify-content: space-between;
     padding: 0 15px;
 }
 
@@ -67,8 +67,8 @@ h1 {
 }
 
 .app-title {
-    flex: 1;
     text-align: center;
+    grid-column: 2;
 }
 
 .app-title h1 {
@@ -76,6 +76,16 @@ h1 {
     font-size: 1.8em;
     color: white;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.app-bar .menu-toggle {
+    grid-column: 1;
+    justify-self: start;
+}
+
+.app-bar .settings-toggle {
+    grid-column: 3;
+    justify-self: end;
 }
 
 /* ハンバーガーメニューボタン */
@@ -547,7 +557,7 @@ footer {
     }
 
     .card {
-        padding: 50px;
+        padding: 35px;
     }
 
     .roulette-wheel {
@@ -563,7 +573,7 @@ footer {
     }
 
     .card {
-        padding: 60px;
+        padding: 40px;
     }
 
     h1 {
@@ -875,6 +885,7 @@ select.number-input {
     .app-bar {
         height: 60px;
         padding: 0 10px;
+        grid-template-columns: 65px 1fr 65px;
     }
 
     .app-title h1 {
