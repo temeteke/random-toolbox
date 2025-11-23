@@ -3,17 +3,11 @@
  * Alpine.jsを使用したリファクタリング版
  */
 
-// グローバル設定状態管理
-window.settingsState = {
-    showSettings: false
-};
-
+// グローバル設定トグル関数
 window.toggleSettings = function() {
-    window.settingsState.showSettings = !window.settingsState.showSettings;
-    // Alpine.jsの$dataを更新
     const settingsPanel = document.querySelector('[x-data*="settingsPanel"]');
-    if (settingsPanel && settingsPanel.__x) {
-        settingsPanel.__x.$data.showSettings = window.settingsState.showSettings;
+    if (settingsPanel) {
+        settingsPanel.dispatchEvent(new CustomEvent('toggle-settings'));
     }
 };
 
@@ -135,6 +129,13 @@ window.settingsPanel = function() {
         showSettings: false,
         currentTheme: ThemeManager.getCurrentTheme(),
         speechEnabled: SpeechManager.isEnabled(),
+
+        init() {
+            // カスタムイベントリスナーを追加
+            this.$el.addEventListener('toggle-settings', () => {
+                this.showSettings = !this.showSettings;
+            });
+        },
 
         changeTheme(theme) {
             ThemeManager.setTheme(theme);
