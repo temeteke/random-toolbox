@@ -6,17 +6,18 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: white;
     min-height: 100vh;
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 5px;
+    padding: 0;
     color: #333;
 }
 
 .container {
     width: 100%;
+    min-width: 320px;
     max-width: 800px;
     margin-top: 85px;
 }
@@ -40,9 +41,7 @@ h1 {
 
 .card {
     background: white;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    padding: 20px;
 }
 
 /* アプリケーションバー */
@@ -557,7 +556,7 @@ footer {
     }
 
     .card {
-        padding: 35px;
+        padding: 30px;
     }
 
     .roulette-wheel {
@@ -573,7 +572,7 @@ footer {
     }
 
     .card {
-        padding: 40px;
+        padding: 30px;
     }
 
     h1 {
@@ -874,10 +873,11 @@ select.number-input {
 /* モバイル */
 @media (max-width: 600px) {
     body {
-        padding: 8px 5px;
+        padding: 0;
     }
 
     .container {
+        min-width: 100%;
         max-width: 100%;
         margin-top: 70px;
     }
@@ -914,7 +914,6 @@ select.number-input {
 
     .card {
         padding: 15px;
-        border-radius: 15px;
     }
 
     .random-number {
@@ -989,7 +988,7 @@ select.number-input {
 [data-theme="dark"] {
     --bg-gradient-1: #1a1a2e;
     --bg-gradient-2: #16213e;
-    --card-bg: #0f3460;
+    --card-bg: #1e1e2e;
     --text-primary: #eee;
     --text-secondary: #bbb;
     --border-color: #2d3561;
@@ -999,7 +998,7 @@ select.number-input {
 }
 
 [data-theme="dark"] body {
-    background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 100%);
+    background: #1a1a2e;
 }
 
 [data-theme="dark"] .card {
