@@ -72,6 +72,65 @@ window.tabManager = function() {
     };
 };
 
+// 設定パネルコンポーネント
+window.settingsPanel = function() {
+    return {
+        currentTheme: ThemeManager.getCurrentTheme(),
+        speechEnabled: SpeechManager.isEnabled(),
+
+        changeTheme(theme) {
+            ThemeManager.setTheme(theme);
+            this.currentTheme = theme;
+        },
+
+        toggleSpeech() {
+            this.speechEnabled = SpeechManager.toggle();
+        },
+
+        exportData() {
+            try {
+                DataManager.exportAllData();
+                alert('データをエクスポートしました！');
+            } catch (error) {
+                alert('エクスポートに失敗しました: ' + error.message);
+            }
+        },
+
+        exportCSV() {
+            try {
+                DataManager.exportAsCSV();
+                alert('CSVファイルをエクスポートしました！');
+            } catch (error) {
+                alert('エクスポートに失敗しました: ' + error.message);
+            }
+        },
+
+        importData() {
+            const input = document.getElementById('importFileInput');
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    try {
+                        await DataManager.importData(file);
+                        alert('データをインポートしました！ページをリロードします。');
+                        location.reload();
+                    } catch (error) {
+                        alert('インポートに失敗しました: ' + error.message);
+                    }
+                }
+            };
+            input.click();
+        },
+
+        clearAllData() {
+            if (DataManager.clearAllData()) {
+                alert('全てのデータを削除しました。ページをリロードします。');
+                location.reload();
+            }
+        }
+    };
+};
+
 // コンポーネントが正しく読み込まれているか確認
 console.log('Components loaded:', {
     HistoryManager: typeof window.HistoryManager,
