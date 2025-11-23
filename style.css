@@ -11,27 +11,19 @@ body {
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 10px;
+    padding: 5px;
     color: #333;
 }
 
 .container {
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
 }
 
 header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    text-align: center;
     margin-bottom: 15px;
     color: white;
-    position: relative;
-}
-
-.header-content {
-    flex: 1;
-    text-align: center;
 }
 
 h1 {
@@ -54,30 +46,35 @@ h1 {
 
 /* ハンバーガーメニューボタン */
 .menu-toggle {
-    width: 45px;
-    height: 45px;
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    font-size: 22px;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 12px;
+    font-size: 24px;
     cursor: pointer;
-    color: white;
+    color: #667eea;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     transition: all 0.2s;
-    flex-shrink: 0;
+    z-index: 1001;
 }
 
 .menu-toggle:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.05);
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 
 [data-theme="dark"] .menu-toggle {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(15, 52, 96, 0.95);
+    color: #8a9fff;
 }
 
 [data-theme="dark"] .menu-toggle:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--card-bg);
 }
 
 /* メニューオーバーレイ */
@@ -543,31 +540,6 @@ footer {
     }
 }
 
-/* モバイル対応: サイドバーメニュー */
-@media (max-width: 600px) {
-    .sidebar-menu {
-        width: 85%;
-        max-width: 300px;
-    }
-
-    .menu-toggle {
-        width: 45px;
-        height: 45px;
-        font-size: 20px;
-    }
-
-    .current-tool {
-        padding: 12px 15px;
-    }
-
-    .tool-icon {
-        font-size: 1.5em;
-    }
-
-    .tool-name {
-        font-size: 1em;
-    }
-}
 
 /* サイコロ表示 */
 .dice-values {
@@ -861,48 +833,68 @@ select.number-input {
 /* モバイル */
 @media (max-width: 600px) {
     body {
-        padding: 5px;
+        padding: 2px;
     }
 
     header {
-        margin-bottom: 10px;
-        gap: 8px;
+        margin-bottom: 8px;
     }
 
     .menu-toggle,
     .settings-toggle {
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
+        top: 10px;
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
     }
 
-    .header-content h1 {
-        font-size: 1.5em;
-        margin-bottom: 3px;
+    .menu-toggle {
+        left: 10px;
     }
 
-    .header-content .subtitle {
-        font-size: 0.9em;
+    .settings-toggle {
+        right: 10px;
     }
 
     h1 {
-        font-size: 1.8em;
-        margin-bottom: 5px;
+        font-size: 1.6em;
+        margin-bottom: 3px;
+    }
+
+    .subtitle {
+        font-size: 0.9em;
     }
 
     .card {
-        padding: 15px;
+        padding: 12px;
     }
 
     .random-number {
-        font-size: 3em;
+        font-size: 2.5em;
     }
 
     .settings-panel {
-        top: 60px;
-        right: 10px;
-        left: 10px;
+        top: 65px;
+        right: 5px;
+        left: 5px;
         min-width: auto;
+    }
+
+    .sidebar-menu {
+        width: 90%;
+        max-width: 320px;
+    }
+
+    .current-tool {
+        padding: 10px 12px;
+    }
+
+    .tool-icon {
+        font-size: 1.5em;
+    }
+
+    .tool-name {
+        font-size: 1em;
     }
 
     .roulette-wheel {
@@ -1018,30 +1010,35 @@ select.number-input {
 }
 
 .settings-toggle {
-    width: 45px;
-    height: 45px;
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    font-size: 22px;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 12px;
+    font-size: 24px;
     cursor: pointer;
-    color: white;
+    color: #667eea;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     transition: all 0.2s;
-    flex-shrink: 0;
+    z-index: 999;
 }
 
 .settings-toggle:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.05);
+    background: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 
 [data-theme="dark"] .settings-toggle {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(15, 52, 96, 0.95);
+    color: #8a9fff;
 }
 
 [data-theme="dark"] .settings-toggle:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--card-bg);
 }
 
 .settings-section {
