@@ -11,6 +11,54 @@
     <link rel="icon" type="image/png" href="icon-192.png">
 </head>
 <body>
+    <!-- 設定トグルボタン -->
+    <button class="settings-toggle" @click="showSettings = !showSettings" x-data="{ showSettings: false }">
+        ⚙️
+    </button>
+
+    <!-- 設定パネル -->
+    <div x-show="showSettings" x-data="settingsPanel()" class="settings-panel" @click.away="showSettings = false" style="display: none;" x-transition>
+        <h3 style="margin-bottom: 20px;">設定</h3>
+
+        <div class="settings-section">
+            <h4>テーマ</h4>
+            <button @click="changeTheme('light')" class="settings-btn" :class="{ 'active': currentTheme === 'light' }">
+                ☀️ ライト
+            </button>
+            <button @click="changeTheme('dark')" class="settings-btn" :class="{ 'active': currentTheme === 'dark' }">
+                🌙 ダーク
+            </button>
+            <button @click="changeTheme('auto')" class="settings-btn" :class="{ 'active': currentTheme === 'auto' }">
+                🔄 自動
+            </button>
+        </div>
+
+        <div class="settings-section">
+            <h4>音声読み上げ</h4>
+            <button @click="toggleSpeech()" class="settings-btn" :class="{ 'active': speechEnabled }">
+                <span x-text="speechEnabled ? '🔊 ON' : '🔇 OFF'"></span>
+            </button>
+        </div>
+
+        <div class="settings-section">
+            <h4>データ管理</h4>
+            <button @click="exportData()" class="settings-btn">
+                📥 エクスポート (JSON)
+            </button>
+            <button @click="exportCSV()" class="settings-btn">
+                📥 エクスポート (CSV)
+            </button>
+            <button @click="importData()" class="settings-btn">
+                📤 インポート
+            </button>
+            <button @click="clearAllData()" class="settings-btn" style="color: #f44336;">
+                🗑️ 全データ削除
+            </button>
+        </div>
+    </div>
+
+    <input type="file" id="importFileInput" accept=".json" style="display: none;">
+
     <div class="container" x-data="tabManager()">
         <header>
             <h1>🎲 Random Toolbox</h1>
@@ -53,6 +101,36 @@
                     </button>
                     <button @click="switchTab('lottery')" :class="{ 'tab-btn': true, 'active': activeTab === 'lottery' }">
                         🎊 抽選
+                    </button>
+                    <button @click="switchTab('coin')" :class="{ 'tab-btn': true, 'active': activeTab === 'coin' }">
+                        🪙 コイン
+                    </button>
+                    <button @click="switchTab('menu')" :class="{ 'tab-btn': true, 'active': activeTab === 'menu' }">
+                        🍔 メニュー
+                    </button>
+                    <button @click="switchTab('name')" :class="{ 'tab-btn': true, 'active': activeTab === 'name' }">
+                        📛 名前
+                    </button>
+                    <button @click="switchTab('bingo')" :class="{ 'tab-btn': true, 'active': activeTab === 'bingo' }">
+                        🎬 ビンゴ
+                    </button>
+                    <button @click="switchTab('lorem')" :class="{ 'tab-btn': true, 'active': activeTab === 'lorem' }">
+                        📝 テキスト
+                    </button>
+                    <button @click="switchTab('weighted')" :class="{ 'tab-btn': true, 'active': activeTab === 'weighted' }">
+                        ⚖️ 重み抽選
+                    </button>
+                    <button @click="switchTab('timer')" :class="{ 'tab-btn': true, 'active': activeTab === 'timer' }">
+                        ⏱️ タイマー
+                    </button>
+                    <button @click="switchTab('gradient')" :class="{ 'tab-btn': true, 'active': activeTab === 'gradient' }">
+                        🌈 グラデ
+                    </button>
+                    <button @click="switchTab('coordinate')" :class="{ 'tab-btn': true, 'active': activeTab === 'coordinate' }">
+                        🗺️ 座標
+                    </button>
+                    <button @click="switchTab('task')" :class="{ 'tab-btn': true, 'active': activeTab === 'task' }">
+                        ✏️ タスク
                     </button>
                 </div>
 
@@ -524,6 +602,520 @@
                         </ul>
                     </div>
                 </div>
+                <!-- コイントスタブ -->
+                <div x-show="activeTab === 'coin'" class="tab-content" x-data="coinFlip()">
+                    <button @click="flip()" class="generate-btn" :disabled="isFlipping">
+                        🪙 コインを投げる
+                    </button>
+
+                    <div class="result">
+                        <div class="result-label">結果</div>
+                        <div class="coin-result" :class="{ 'fade-in': animating }" x-text="result || '?'"></div>
+                    </div>
+
+                    <div class="coin-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" x-text="stats.heads"></div>
+                            <div class="stat-label">表 (<span x-text="headsPercentage"></span>%)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" x-text="stats.tails"></div>
+                            <div class="stat-label">裏 (<span x-text="tailsPercentage"></span>%)</div>
+                        </div>
+                    </div>
+
+                    <div class="history-section">
+                        <h3>履歴</h3>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.id">
+                                <li>
+                                    <span class="number" x-text="item.result"></span>
+                                    <span class="time" x-text="'#' + item.flipNumber + ' - ' + item.time"></span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- ランダムメニュー提案タブ -->
+                <div x-show="activeTab === 'menu'" class="tab-content" x-data="menuSuggester()">
+                    <div class="input-group">
+                        <label>カテゴリー:</label>
+                        <select x-model="selectedCategory" @change="updateRange()" class="number-input">
+                            <option value="all">全て</option>
+                            <option value="japanese">和食</option>
+                            <option value="western">洋食</option>
+                            <option value="chinese">中華</option>
+                            <option value="fast">ファストフード</option>
+                            <option value="healthy">ヘルシー</option>
+                            <option value="custom">カスタム</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group" x-show="selectedCategory === 'custom'">
+                        <label>カスタムメニュー（1行に1つ）:</label>
+                        <textarea x-model="customItems" @input="saveCustomItems()" class="list-input" rows="6" placeholder="カスタムメニュー1&#10;カスタムメニュー2&#10;カスタムメニュー3"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>予算範囲:</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" x-model="minBudget" placeholder="最小" class="number-input">
+                            <input type="number" x-model="maxBudget" placeholder="最大" class="number-input">
+                        </div>
+                    </div>
+
+                    <button @click="suggest()" class="generate-btn">
+                        🍔 メニューを提案
+                    </button>
+
+                    <div class="result" x-show="result">
+                        <div class="result-label">今日のメニュー</div>
+                        <div class="random-number" :class="{ 'fade-in': animating }" x-text="result?.menu"></div>
+                        <div style="margin-top: 10px; font-size: 1.2em; color: #666;" x-text="result ? '予算: ¥' + result.budget : ''"></div>
+                    </div>
+
+                    <div class="history-section">
+                        <h3>履歴</h3>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.id">
+                                <li>
+                                    <span class="number" x-text="item.menu + ' (¥' + item.budget + ')'"></span>
+                                    <span class="time" x-text="item.category + ' - ' + item.time"></span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 名前ジェネレータータブ -->
+                <div x-show="activeTab === 'name'" class="tab-content" x-data="nameGenerator()">
+                    <div class="input-group">
+                        <label>種類:</label>
+                        <select x-model="nameType" class="number-input">
+                            <option value="japanese">日本語名</option>
+                            <option value="english">英語名</option>
+                            <option value="username">ユーザー名</option>
+                            <option value="project">プロジェクト名</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group" x-show="nameType === 'japanese' || nameType === 'english'">
+                        <label>性別:</label>
+                        <select x-model="gender" class="number-input">
+                            <option value="any">指定なし</option>
+                            <option value="male">男性</option>
+                            <option value="female">女性</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group" x-show="nameType === 'username' || nameType === 'project'">
+                        <label>長さ:</label>
+                        <select x-model="length" class="number-input">
+                            <option value="short">短い</option>
+                            <option value="medium">中</option>
+                            <option value="long">長い</option>
+                        </select>
+                    </div>
+
+                    <button @click="generate()" class="generate-btn">
+                        📛 名前を生成
+                    </button>
+
+                    <div class="result">
+                        <div class="result-label">生成された名前</div>
+                        <div class="random-number" :class="{ 'fade-in': animating }" x-text="result || '?'"></div>
+                    </div>
+
+                    <div class="history-section">
+                        <h3>履歴</h3>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.id">
+                                <li>
+                                    <span class="number" x-text="item.name"></span>
+                                    <span class="time" x-text="item.type + ' - ' + item.time"></span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- ビンゴカードタブ -->
+                <div x-show="activeTab === 'bingo'" class="tab-content" x-data="bingoCard()">
+                    <div class="input-group">
+                        <label>カードサイズ:</label>
+                        <select x-model="cardSize" class="number-input">
+                            <option value="3">3 x 3</option>
+                            <option value="4">4 x 4</option>
+                            <option value="5">5 x 5</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>カードタイプ:</label>
+                        <select x-model="cardType" class="number-input">
+                            <option value="numbers">数字</option>
+                            <option value="custom">カスタム項目</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group" x-show="cardType === 'custom'">
+                        <label>カスタム項目（1行に1つ）:</label>
+                        <textarea x-model="customItems" @input="saveCustomItems()" class="list-input" rows="8" placeholder="項目1&#10;項目2&#10;項目3&#10;..."></textarea>
+                    </div>
+
+                    <button @click="generate()" class="generate-btn">
+                        🎬 ビンゴカードを生成
+                    </button>
+
+                    <div class="result" x-show="generatedCard">
+                        <div class="result-label">ビンゴカード</div>
+                        <div :class="'bingo-card size-' + cardSize" :class="{ 'fade-in': animating }">
+                            <template x-for="(row, i) in generatedCard" :key="i">
+                                <template x-for="(cell, j) in row" :key="j">
+                                    <div class="bingo-cell" :class="{ 'free': cell === 'FREE' }" x-text="cell"></div>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="history-section">
+                        <h3>履歴</h3>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <div style="max-height: 200px; overflow-y: auto;">
+                            <template x-for="item in history" :key="item.id">
+                                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                                    <div style="margin-bottom: 10px; font-size: 14px; color: #666;">
+                                        <span x-text="item.size + 'x' + item.size + ' - ' + (item.type === 'numbers' ? '数字' : 'カスタム') + ' - ' + item.time"></span>
+                                    </div>
+                                    <div :class="'bingo-card size-' + item.size" style="transform: scale(0.7); transform-origin: left top;">
+                                        <template x-for="(row, i) in item.card" :key="i">
+                                            <template x-for="(cell, j) in row" :key="j">
+                                                <div class="bingo-cell" :class="{ 'free': cell === 'FREE' }" x-text="cell"></div>
+                                            </template>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lorem Ipsumタブ -->
+                <div x-show="activeTab === 'lorem'" class="tab-content" x-data="loremGenerator()">
+                    <div class="input-group">
+                        <label>言語:</label>
+                        <select x-model="language" class="number-input">
+                            <option value="japanese">日本語</option>
+                            <option value="english">英語（Lorem Ipsum）</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>生成タイプ:</label>
+                        <select x-model="generationType" class="number-input">
+                            <option value="paragraphs">段落</option>
+                            <option value="sentences">文</option>
+                            <option value="words">単語</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group" x-show="generationType === 'paragraphs'">
+                        <label>段落数: <span x-text="paragraphCount"></span></label>
+                        <input type="range" x-model="paragraphCount" min="1" max="10" class="slider">
+                    </div>
+
+                    <div class="input-group" x-show="generationType === 'sentences'">
+                        <label>文の数: <span x-text="sentenceCount"></span></label>
+                        <input type="range" x-model="sentenceCount" min="1" max="20" class="slider">
+                    </div>
+
+                    <div class="input-group" x-show="generationType === 'words'">
+                        <label>単語数: <span x-text="wordCount"></span></label>
+                        <input type="range" x-model="wordCount" min="10" max="200" class="slider">
+                    </div>
+
+                    <button @click="generate()" class="generate-btn">
+                        📝 テキストを生成
+                    </button>
+
+                    <div class="result" x-show="result">
+                        <div class="result-label">生成されたテキスト</div>
+                        <div style="text-align: left; white-space: pre-wrap; font-size: 14px; max-height: 300px; overflow-y: auto; padding: 15px; background: #f8f9fa; border-radius: 10px;" :class="{ 'fade-in': animating }" x-text="result"></div>
+                        <button @click="copyText()" class="copy-btn" x-show="result">📋 コピー</button>
+                    </div>
+
+                    <div class="history-section">
+                        <h3>履歴</h3>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.id">
+                                <li @click="result = item.fullText" style="cursor: pointer;">
+                                    <span class="number" x-text="item.text"></span>
+                                    <span class="time" x-text="item.config + ' - ' + item.time"></span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 重み付き抽選タブ -->
+                <div x-show="activeTab === 'weighted'" class="tab-content" x-data="weightedLottery()">
+                    <div class="input-group">
+                        <label>項目と重み（1行に1つ、形式: 項目名:重み）:</label>
+                        <textarea x-model="items" @input="saveItems()" class="list-input" rows="8" placeholder="レア:1&#10;ノーマル:10&#10;コモン:50"></textarea>
+                    </div>
+
+                    <button @click="draw()" class="generate-btn">
+                        ⚖️ 抽選する
+                    </button>
+
+                    <div class="result" x-show="result">
+                        <div class="result-label">当選!</div>
+                        <div class="random-number" :class="{ 'fade-in': animating }" x-text="result?.name"></div>
+                        <div style="margin-top: 10px; color: #666;">
+                            重み: <span x-text="result?.weight"></span> / 確率: <span x-text="result?.probability"></span>%
+                        </div>
+                    </div>
+
+                    <div class="weighted-items">
+                        <div style="font-weight: 600; margin-bottom: 10px;">確率一覧</div>
+                        <template x-for="item in getProbabilityList()" :key="item.name">
+                            <div class="weighted-item">
+                                <span x-text="item.name"></span>
+                                <span class="item-probability" x-text="item.probability + '%'"></span>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="history-section">
+                        <h3>履歴</h3>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.id">
+                                <li>
+                                    <span class="number" x-text="item.item + ' (' + item.probability + '%)'"></span>
+                                    <span class="time" x-text="item.time"></span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- ランダムタイマータブ -->
+                <div x-show="activeTab === 'timer'" class="tab-content" x-data="randomTimer()">
+                    <div class="input-group">
+                        <label>時間範囲（分）:</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" x-model="minMinutes" min="1" placeholder="最小" class="number-input">
+                            <input type="number" x-model="maxMinutes" min="1" placeholder="最大" class="number-input">
+                        </div>
+                    </div>
+
+                    <button @click="start()" class="generate-btn" x-show="!isRunning">
+                        ⏱️ タイマー開始
+                    </button>
+
+                    <div class="result" x-show="isRunning">
+                        <div class="result-label">残り時間</div>
+                        <div class="timer-display" x-text="displayTime"></div>
+                        <div class="timer-progress">
+                            <div class="timer-progress-fill" :style="'width: ' + progressPercentage + '%'"></div>
+                        </div>
+                    </div>
+
+                    <div class="timer-controls" x-show="isRunning">
+                        <button @click="pause()" x-show="!isPaused" style="background: #ff9800; color: white;">⏸ 一時停止</button>
+                        <button @click="resume()" x-show="isPaused" style="background: #4CAF50; color: white;">▶️ 再開</button>
+                        <button @click="stop()" style="background: #f44336; color: white;">⏹ 停止</button>
+                    </div>
+
+                    <div class="history-section">
+                        <h3>履歴</h3>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.id">
+                                <li>
+                                    <span class="number" x-text="item.duration"></span>
+                                    <span class="time" x-text="item.time"></span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- グラデーション生成器タブ -->
+                <div x-show="activeTab === 'gradient'" class="tab-content" x-data="gradientGenerator()">
+                    <div class="input-group">
+                        <label>グラデーションタイプ:</label>
+                        <select x-model="gradientType" class="number-input">
+                            <option value="linear">線形</option>
+                            <option value="radial">放射状</option>
+                            <option value="conic">円錐形</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>色の数: <span x-text="colorCount"></span></label>
+                        <input type="range" x-model="colorCount" min="2" max="5" class="slider">
+                    </div>
+
+                    <div class="input-group" x-show="gradientType === 'linear' || gradientType === 'conic'">
+                        <label>角度: <span x-text="angle"></span>度</label>
+                        <input type="range" x-model="angle" min="0" max="360" class="slider">
+                    </div>
+
+                    <button @click="generate()" class="generate-btn">
+                        🌈 グラデーションを生成
+                    </button>
+
+                    <div class="result" x-show="generatedGradient">
+                        <div class="result-label">プレビュー</div>
+                        <div class="gradient-preview" :style="generatedGradient?.preview" :class="{ 'fade-in': animating }"></div>
+                        <div class="gradient-colors">
+                            <template x-for="color in generatedGradient?.colors" :key="color">
+                                <div class="gradient-color-item">
+                                    <div class="gradient-color-box" :style="'background: ' + color"></div>
+                                    <div style="font-size: 12px; font-family: monospace;" x-text="color"></div>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="gradient-code" x-text="generatedGradient?.css"></div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button @click="copyCSS(generatedGradient.css)" class="copy-btn" style="flex: 1;">📋 CSS</button>
+                            <button @click="copySVG()" class="copy-btn" style="flex: 1;">📋 SVG</button>
+                        </div>
+                    </div>
+
+                    <div class="history-section">
+                        <h3>履歴</h3>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <div style="max-height: 200px; overflow-y: auto;">
+                            <template x-for="item in history" :key="item.id">
+                                <div @click="generatedGradient = item.gradient" style="margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                                    <div style="height: 50px; border-radius: 6px; margin-bottom: 8px;" :style="item.gradient.preview"></div>
+                                    <div style="font-size: 12px; color: #666;" x-text="item.type + ' - ' + item.time"></div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 座標ランダマイザータブ -->
+                <div x-show="activeTab === 'coordinate'" class="tab-content" x-data="coordinateRandomizer()">
+                    <div class="input-group">
+                        <label>範囲:</label>
+                        <select x-model="rangeType" @change="updateRange()" class="number-input">
+                            <option value="world">世界全体</option>
+                            <option value="japan">日本</option>
+                            <option value="tokyo">東京</option>
+                            <option value="usa">アメリカ</option>
+                            <option value="europe">ヨーロッパ</option>
+                            <option value="asia">アジア</option>
+                            <option value="custom">カスタム</option>
+                        </select>
+                    </div>
+
+                    <div x-show="rangeType === 'custom'">
+                        <div class="input-group">
+                            <label>緯度範囲:</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="number" x-model="minLat" step="0.1" placeholder="最小" class="number-input">
+                                <input type="number" x-model="maxLat" step="0.1" placeholder="最大" class="number-input">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>経度範囲:</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="number" x-model="minLng" step="0.1" placeholder="最小" class="number-input">
+                                <input type="number" x-model="maxLng" step="0.1" placeholder="最大" class="number-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button @click="generate()" class="generate-btn">
+                        🗺️ 座標を生成
+                    </button>
+
+                    <div class="result" x-show="result">
+                        <div class="result-label">生成された座標</div>
+                        <div style="font-size: 1.5em; font-family: monospace; margin: 20px 0;" :class="{ 'fade-in': animating }" x-text="result?.formatted"></div>
+                        <div style="display: flex; gap: 10px;">
+                            <button @click="copyCoordinate()" class="copy-btn" style="flex: 1;">📋 コピー</button>
+                            <button @click="openInMaps()" class="copy-btn" style="flex: 1; background: #4285f4;">🗺️ 地図で開く</button>
+                        </div>
+                    </div>
+
+                    <div class="history-section">
+                        <h3>履歴</h3>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.id">
+                                <li @click="window.open(item.url, '_blank')" style="cursor: pointer;">
+                                    <span class="number" x-text="item.coordinate"></span>
+                                    <span class="time" x-text="item.range + ' - ' + item.time"></span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- タスクピッカータブ -->
+                <div x-show="activeTab === 'task'" class="tab-content" x-data="taskPicker()">
+                    <div class="input-group">
+                        <label>タスク（1行に1つ、形式: タスク名:優先度）:</label>
+                        <textarea x-model="tasks" @input="saveTasks()" class="list-input" rows="8" placeholder="買い物に行く:高&#10;レポートを書く:中&#10;メールを返信:低"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>優先度フィルター:</label>
+                        <select x-model="priorities" class="number-input">
+                            <option value="all">全て</option>
+                            <option value="high">高のみ</option>
+                            <option value="medium">中のみ</option>
+                            <option value="low">低のみ</option>
+                        </select>
+                    </div>
+
+                    <button @click="pick()" class="generate-btn">
+                        ✏️ タスクを選ぶ
+                    </button>
+
+                    <div class="result" x-show="result">
+                        <div class="result-label">選ばれたタスク</div>
+                        <div class="random-number" :class="{ 'fade-in': animating }">
+                            <span x-text="getPriorityEmoji(result?.priority)"></span>
+                            <span x-text="result?.name"></span>
+                        </div>
+                        <div style="margin-top: 15px; color: #666;">
+                            優先度: <span :style="'color: ' + getPriorityColor(result?.priority)" x-text="result?.priority"></span>
+                        </div>
+                        <button @click="markComplete()" class="copy-btn" style="margin-top: 15px;">✅ 完了にする</button>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button @click="resetCompleted()" class="secondary-btn">🔄 完了タスクをリセット</button>
+                    </div>
+
+                    <div class="history-section">
+                        <h3>履歴</h3>
+                        <button @click="clearHistory()" class="clear-btn">履歴をクリア</button>
+                        <ul class="history-list">
+                            <template x-for="item in history" :key="item.id">
+                                <li>
+                                    <span class="number">
+                                        <span x-text="getPriorityEmoji(item.priority)"></span>
+                                        <span x-text="item.task"></span>
+                                    </span>
+                                    <span class="time" x-text="item.time"></span>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </main>
 
@@ -538,6 +1130,9 @@
     <!-- 1. 先にコンポーネント関数を登録 -->
     <script src="js/utils/HistoryManager.js"></script>
     <script src="js/utils/URLStateManager.js"></script>
+    <script src="js/utils/DataManager.js"></script>
+    <script src="js/utils/ThemeManager.js"></script>
+    <script src="js/utils/SpeechManager.js"></script>
     <script src="js/components/numberGenerator.js"></script>
     <script src="js/components/listSelector.js"></script>
     <script src="js/components/roulette.js"></script>
@@ -549,6 +1144,16 @@
     <script src="js/components/decisionTool.js"></script>
     <script src="js/components/shuffler.js"></script>
     <script src="js/components/lotteryBox.js"></script>
+    <script src="js/components/coinFlip.js"></script>
+    <script src="js/components/menuSuggester.js"></script>
+    <script src="js/components/nameGenerator.js"></script>
+    <script src="js/components/bingoCard.js"></script>
+    <script src="js/components/loremGenerator.js"></script>
+    <script src="js/components/weightedLottery.js"></script>
+    <script src="js/components/randomTimer.js"></script>
+    <script src="js/components/gradientGenerator.js"></script>
+    <script src="js/components/coordinateRandomizer.js"></script>
+    <script src="js/components/taskPicker.js"></script>
     <script src="js/main.js"></script>
 
     <!-- 2. 最後にAlpine.jsを読み込んで初期化 -->
