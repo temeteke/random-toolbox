@@ -118,6 +118,7 @@ window.tabManager = function() {
 // 設定パネルコンポーネント
 window.settingsPanel = function() {
     return {
+        showSettings: false,
         currentTheme: ThemeManager.getCurrentTheme(),
         speechEnabled: SpeechManager.isEnabled(),
 
