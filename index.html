@@ -59,7 +59,119 @@
 
     <input type="file" id="importFileInput" accept=".json" style="display: none;">
 
-    <div class="container" x-data="tabManager()">
+    <div x-data="tabManager()">
+        <!-- ハンバーガーメニューボタン -->
+        <button class="menu-toggle" @click="toggleMenu()">
+            ☰
+        </button>
+
+        <!-- メニューオーバーレイ -->
+        <div class="menu-overlay" x-show="showMenu" @click="closeMenu()" x-transition style="display: none;"></div>
+
+        <!-- サイドバーメニュー -->
+        <nav class="sidebar-menu" x-show="showMenu" x-transition style="display: none;">
+        <div class="menu-header">
+            <h2>🎲 ツール一覧</h2>
+            <button class="menu-close" @click="closeMenu()">✕</button>
+        </div>
+
+        <div class="menu-categories">
+            <!-- 基本ツール -->
+            <div class="menu-category">
+                <div class="category-header">🎲 基本ツール</div>
+                <button @click="switchTab('number')" :class="{ 'menu-item': true, 'active': activeTab === 'number' }">
+                    🔢 数字生成
+                </button>
+                <button @click="switchTab('list')" :class="{ 'menu-item': true, 'active': activeTab === 'list' }">
+                    📋 リスト選択
+                </button>
+                <button @click="switchTab('decision')" :class="{ 'menu-item': true, 'active': activeTab === 'decision' }">
+                    🎯 決定ツール
+                </button>
+                <button @click="switchTab('shuffle')" :class="{ 'menu-item': true, 'active': activeTab === 'shuffle' }">
+                    🔀 シャッフル
+                </button>
+            </div>
+
+            <!-- ゲームツール -->
+            <div class="menu-category">
+                <div class="category-header">🎮 ゲームツール</div>
+                <button @click="switchTab('roulette')" :class="{ 'menu-item': true, 'active': activeTab === 'roulette' }">
+                    🎰 ルーレット
+                </button>
+                <button @click="switchTab('dice')" :class="{ 'menu-item': true, 'active': activeTab === 'dice' }">
+                    🎲 サイコロ
+                </button>
+                <button @click="switchTab('card')" :class="{ 'menu-item': true, 'active': activeTab === 'card' }">
+                    🃏 カード
+                </button>
+                <button @click="switchTab('coin')" :class="{ 'menu-item': true, 'active': activeTab === 'coin' }">
+                    🪙 コイントス
+                </button>
+                <button @click="switchTab('bingo')" :class="{ 'menu-item': true, 'active': activeTab === 'bingo' }">
+                    🎬 ビンゴ
+                </button>
+                <button @click="switchTab('lottery')" :class="{ 'menu-item': true, 'active': activeTab === 'lottery' }">
+                    🎊 抽選ボックス
+                </button>
+            </div>
+
+            <!-- クリエイティブ -->
+            <div class="menu-category">
+                <div class="category-header">🎨 クリエイティブ</div>
+                <button @click="switchTab('color')" :class="{ 'menu-item': true, 'active': activeTab === 'color' }">
+                    🎨 カラー
+                </button>
+                <button @click="switchTab('gradient')" :class="{ 'menu-item': true, 'active': activeTab === 'gradient' }">
+                    🌈 グラデーション
+                </button>
+                <button @click="switchTab('lorem')" :class="{ 'menu-item': true, 'active': activeTab === 'lorem' }">
+                    📝 ダミーテキスト
+                </button>
+                <button @click="switchTab('password')" :class="{ 'menu-item': true, 'active': activeTab === 'password' }">
+                    🔐 パスワード
+                </button>
+            </div>
+
+            <!-- データ管理 -->
+            <div class="menu-category">
+                <div class="category-header">📊 データ管理</div>
+                <button @click="switchTab('weighted')" :class="{ 'menu-item': true, 'active': activeTab === 'weighted' }">
+                    ⚖️ 重み付き抽選
+                </button>
+                <button @click="switchTab('task')" :class="{ 'menu-item': true, 'active': activeTab === 'task' }">
+                    ✏️ タスクピッカー
+                </button>
+            </div>
+
+            <!-- 生活ツール -->
+            <div class="menu-category">
+                <div class="category-header">🍔 生活ツール</div>
+                <button @click="switchTab('menu')" :class="{ 'menu-item': true, 'active': activeTab === 'menu' }">
+                    🍔 メニュー提案
+                </button>
+                <button @click="switchTab('name')" :class="{ 'menu-item': true, 'active': activeTab === 'name' }">
+                    📛 名前生成
+                </button>
+            </div>
+
+            <!-- 日時・位置 -->
+            <div class="menu-category">
+                <div class="category-header">📅 日時・位置</div>
+                <button @click="switchTab('date')" :class="{ 'menu-item': true, 'active': activeTab === 'date' }">
+                    📅 ランダム日付
+                </button>
+                <button @click="switchTab('timer')" :class="{ 'menu-item': true, 'active': activeTab === 'timer' }">
+                    ⏱️ ランダムタイマー
+                </button>
+                <button @click="switchTab('coordinate')" :class="{ 'menu-item': true, 'active': activeTab === 'coordinate' }">
+                    🗺️ ランダム座標
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
         <header>
             <h1>🎲 Random Toolbox</h1>
             <p class="subtitle">ランダム生成ツール</p>
@@ -67,71 +179,10 @@
 
         <main>
             <div class="card">
-                <!-- タブナビゲーション -->
-                <div class="tabs">
-                    <button @click="switchTab('number')" :class="{ 'tab-btn': true, 'active': activeTab === 'number' }">
-                        🔢 数字
-                    </button>
-                    <button @click="switchTab('list')" :class="{ 'tab-btn': true, 'active': activeTab === 'list' }">
-                        📋 リスト
-                    </button>
-                    <button @click="switchTab('roulette')" :class="{ 'tab-btn': true, 'active': activeTab === 'roulette' }">
-                        🎰 ルーレット
-                    </button>
-                    <button @click="switchTab('dice')" :class="{ 'tab-btn': true, 'active': activeTab === 'dice' }">
-                        🎲 サイコロ
-                    </button>
-                    <button @click="switchTab('card')" :class="{ 'tab-btn': true, 'active': activeTab === 'card' }">
-                        🃏 カード
-                    </button>
-                    <button @click="switchTab('color')" :class="{ 'tab-btn': true, 'active': activeTab === 'color' }">
-                        🎨 カラー
-                    </button>
-                    <button @click="switchTab('date')" :class="{ 'tab-btn': true, 'active': activeTab === 'date' }">
-                        📅 日付
-                    </button>
-                    <button @click="switchTab('password')" :class="{ 'tab-btn': true, 'active': activeTab === 'password' }">
-                        ✨ パスワード
-                    </button>
-                    <button @click="switchTab('decision')" :class="{ 'tab-btn': true, 'active': activeTab === 'decision' }">
-                        🎯 決定
-                    </button>
-                    <button @click="switchTab('shuffle')" :class="{ 'tab-btn': true, 'active': activeTab === 'shuffle' }">
-                        🔀 シャッフル
-                    </button>
-                    <button @click="switchTab('lottery')" :class="{ 'tab-btn': true, 'active': activeTab === 'lottery' }">
-                        🎊 抽選
-                    </button>
-                    <button @click="switchTab('coin')" :class="{ 'tab-btn': true, 'active': activeTab === 'coin' }">
-                        🪙 コイン
-                    </button>
-                    <button @click="switchTab('menu')" :class="{ 'tab-btn': true, 'active': activeTab === 'menu' }">
-                        🍔 メニュー
-                    </button>
-                    <button @click="switchTab('name')" :class="{ 'tab-btn': true, 'active': activeTab === 'name' }">
-                        📛 名前
-                    </button>
-                    <button @click="switchTab('bingo')" :class="{ 'tab-btn': true, 'active': activeTab === 'bingo' }">
-                        🎬 ビンゴ
-                    </button>
-                    <button @click="switchTab('lorem')" :class="{ 'tab-btn': true, 'active': activeTab === 'lorem' }">
-                        📝 テキスト
-                    </button>
-                    <button @click="switchTab('weighted')" :class="{ 'tab-btn': true, 'active': activeTab === 'weighted' }">
-                        ⚖️ 重み抽選
-                    </button>
-                    <button @click="switchTab('timer')" :class="{ 'tab-btn': true, 'active': activeTab === 'timer' }">
-                        ⏱️ タイマー
-                    </button>
-                    <button @click="switchTab('gradient')" :class="{ 'tab-btn': true, 'active': activeTab === 'gradient' }">
-                        🌈 グラデ
-                    </button>
-                    <button @click="switchTab('coordinate')" :class="{ 'tab-btn': true, 'active': activeTab === 'coordinate' }">
-                        🗺️ 座標
-                    </button>
-                    <button @click="switchTab('task')" :class="{ 'tab-btn': true, 'active': activeTab === 'task' }">
-                        ✏️ タスク
-                    </button>
+                <!-- 現在のツール表示 -->
+                <div class="current-tool">
+                    <span class="tool-icon" x-text="getToolIcon()"></span>
+                    <span class="tool-name" x-text="getToolName()"></span>
                 </div>
 
                 <!-- 数字生成タブ -->
@@ -1125,6 +1176,7 @@
                 <button id="installBtn" class="install-btn">インストール</button>
             </p>
         </footer>
+    </div>
     </div>
 
     <!-- 1. 先にコンポーネント関数を登録 -->
