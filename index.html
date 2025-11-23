@@ -57,15 +57,23 @@
     <input type="file" id="importFileInput" accept=".json" style="display: none;">
 
     <div x-data="tabManager()">
-        <!-- ハンバーガーメニューボタン -->
-        <button class="menu-toggle" @click="toggleMenu()" x-show="!showMenu" x-transition>
-            ☰
-        </button>
+        <!-- アプリケーションバー -->
+        <div class="app-bar">
+            <!-- ハンバーガーメニューボタン -->
+            <button class="menu-toggle" @click="toggleMenu()" x-show="!showMenu" x-transition>
+                ☰
+            </button>
 
-        <!-- 設定トグルボタン -->
-        <button class="settings-toggle" @click="window.toggleSettings()">
-            ⚙️
-        </button>
+            <!-- アプリ名 -->
+            <div class="app-title">
+                <h1>🎲 Random Toolbox</h1>
+            </div>
+
+            <!-- 設定トグルボタン -->
+            <button class="settings-toggle" @click="window.toggleSettings()">
+                ⚙️
+            </button>
+        </div>
 
         <!-- メニューオーバーレイ -->
         <div class="menu-overlay" x-show="showMenu" @click="closeMenu()" x-transition style="display: none;"></div>
@@ -174,11 +182,6 @@
     </nav>
 
     <div class="container">
-        <header>
-            <h1>🎲 Random Toolbox</h1>
-            <p class="subtitle">ランダム生成ツール</p>
-        </header>
-
         <main>
             <div class="card">
                 <!-- 現在のツール表示 -->
