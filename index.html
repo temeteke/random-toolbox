@@ -11,13 +11,14 @@
     <link rel="icon" type="image/png" href="icon-192.png">
 </head>
 <body>
-    <!-- 設定トグルボタン -->
-    <button class="settings-toggle" @click="showSettings = !showSettings" x-data="{ showSettings: false }">
-        ⚙️
-    </button>
+    <div x-data="settingsPanel()">
+        <!-- 設定トグルボタン -->
+        <button class="settings-toggle" @click="showSettings = !showSettings">
+            ⚙️
+        </button>
 
-    <!-- 設定パネル -->
-    <div x-show="showSettings" x-data="settingsPanel()" class="settings-panel" @click.away="showSettings = false" style="display: none;" x-transition>
+        <!-- 設定パネル -->
+        <div x-show="showSettings" class="settings-panel" @click.away="showSettings = false" style="display: none;" x-transition>
         <h3 style="margin-bottom: 20px;">設定</h3>
 
         <div class="settings-section">
@@ -55,6 +56,7 @@
                 🗑️ 全データ削除
             </button>
         </div>
+    </div>
     </div>
 
     <input type="file" id="importFileInput" accept=".json" style="display: none;">
