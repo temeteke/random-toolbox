@@ -22,6 +22,7 @@ body {
 
 header {
     text-align: center;
+    margin-top: 60px;
     margin-bottom: 15px;
     color: white;
 }
@@ -833,27 +834,32 @@ select.number-input {
 /* モバイル */
 @media (max-width: 600px) {
     body {
-        padding: 2px;
+        padding: 8px 5px;
+    }
+
+    .container {
+        max-width: 100%;
     }
 
     header {
-        margin-bottom: 8px;
+        margin-top: 50px;
+        margin-bottom: 12px;
     }
 
     .menu-toggle,
     .settings-toggle {
-        top: 10px;
+        top: 8px;
         width: 45px;
         height: 45px;
         font-size: 20px;
     }
 
     .menu-toggle {
-        left: 10px;
+        left: 8px;
     }
 
     .settings-toggle {
-        right: 10px;
+        right: 8px;
     }
 
     h1 {
@@ -866,7 +872,8 @@ select.number-input {
     }
 
     .card {
-        padding: 12px;
+        padding: 15px;
+        border-radius: 15px;
     }
 
     .random-number {
@@ -874,7 +881,7 @@ select.number-input {
     }
 
     .settings-panel {
-        top: 65px;
+        top: 60px;
         right: 5px;
         left: 5px;
         min-width: auto;
@@ -887,6 +894,7 @@ select.number-input {
 
     .current-tool {
         padding: 10px 12px;
+        margin-bottom: 15px;
     }
 
     .tool-icon {

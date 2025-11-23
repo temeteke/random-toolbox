@@ -58,7 +58,7 @@
 
     <div x-data="tabManager()">
         <!-- ハンバーガーメニューボタン -->
-        <button class="menu-toggle" @click="toggleMenu()">
+        <button class="menu-toggle" @click="toggleMenu()" x-show="!showMenu" x-transition>
             ☰
         </button>
 
