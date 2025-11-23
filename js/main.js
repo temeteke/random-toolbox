@@ -3,6 +3,20 @@
  * Alpine.jsを使用したリファクタリング版
  */
 
+// グローバル設定状態管理
+window.settingsState = {
+    showSettings: false
+};
+
+window.toggleSettings = function() {
+    window.settingsState.showSettings = !window.settingsState.showSettings;
+    // Alpine.jsの$dataを更新
+    const settingsPanel = document.querySelector('[x-data*="settingsPanel"]');
+    if (settingsPanel && settingsPanel.__x) {
+        settingsPanel.__x.$data.showSettings = window.settingsState.showSettings;
+    }
+};
+
 // PWA: Service Worker登録
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

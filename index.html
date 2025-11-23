@@ -12,11 +12,6 @@
 </head>
 <body>
     <div x-data="settingsPanel()">
-        <!-- 設定トグルボタン -->
-        <button class="settings-toggle" @click="showSettings = !showSettings">
-            ⚙️
-        </button>
-
         <!-- 設定パネル -->
         <div x-show="showSettings" class="settings-panel" @click.away="showSettings = false" style="display: none;" x-transition>
         <h3 style="margin-bottom: 20px;">設定</h3>
@@ -62,11 +57,6 @@
     <input type="file" id="importFileInput" accept=".json" style="display: none;">
 
     <div x-data="tabManager()">
-        <!-- ハンバーガーメニューボタン -->
-        <button class="menu-toggle" @click="toggleMenu()" x-show="!showMenu" x-transition>
-            ☰
-        </button>
-
         <!-- メニューオーバーレイ -->
         <div class="menu-overlay" x-show="showMenu" @click="closeMenu()" x-transition style="display: none;"></div>
 
@@ -175,8 +165,20 @@
 
     <div class="container">
         <header>
-            <h1>🎲 Random Toolbox</h1>
-            <p class="subtitle">ランダム生成ツール</p>
+            <!-- ハンバーガーメニューボタン -->
+            <button class="menu-toggle" @click="toggleMenu()" x-show="!showMenu" x-transition>
+                ☰
+            </button>
+
+            <div class="header-content">
+                <h1>🎲 Random Toolbox</h1>
+                <p class="subtitle">ランダム生成ツール</p>
+            </div>
+
+            <!-- 設定トグルボタン -->
+            <button class="settings-toggle" @click="window.toggleSettings()">
+                ⚙️
+            </button>
         </header>
 
         <main>
